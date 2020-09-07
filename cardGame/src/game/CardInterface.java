@@ -2,7 +2,7 @@ package game;
 
 import java.util.ArrayList;
 
-public interface CardInterface {
+public interface CardInterface extends Cloneable{
 
 
     public void attack(ArrayList<CardInterface> myList, ArrayList<CardInterface> enemyList, String info);

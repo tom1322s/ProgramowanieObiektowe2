@@ -2,21 +2,21 @@ package game;
 
 public abstract class Card implements CardInterface{
 
-    private String name;
-    private int id;
-    private int cost;
-    private String description;
-    private int health;
-    private int attackDamage;
-    private int magicDamage;
-    private double armor;
-    private double magicResistance;
+    protected String name;
+    protected int id;
+    protected int cost;
+    protected String description;
+    protected int health;
+    protected int attackDamage;
+    protected int magicDamage;
+    protected double armor;
+    protected double magicResistance;
 
-    private boolean isPoisoned;
-    private int poisoned;
+    protected boolean isPoisoned;
+    protected int poisoned;
 
-    private boolean isHealth;
-    private int healing;
+    protected boolean isHealth;
+    protected int healing;
 
     public Card(String name, int id, int cost, String description, int health, int attackDamage, int magicDamage, double armor, double magicResistance, boolean isPoisoned, int poisoned, boolean isHealth, int healing) {
         this.name = name;

@@ -8,8 +8,8 @@ public class MainWindow extends JFrame {
 
     private boolean endOfGame = false;
     private ArrayList<CardInterface>cardPack;
-    private Player myPlayer;
-    private Player enemy;
+
+    private GameBoard gameBoard;
 
     public MainWindow(){
         super("CARD GAME");
@@ -23,7 +23,7 @@ public class MainWindow extends JFrame {
         //setLayout(flowLayout);
 
         JButton endTurnButton = new JButton("Zakończ kolejkę");
-        GameBoard gameBoard = new GameBoard();
+        gameBoard = new GameBoard();
         //gameBoard.setMinimumSize(new Dimension(500,500));
 
         endTurnButton.setAlignmentX(JButton.CENTER_ALIGNMENT);
@@ -40,9 +40,6 @@ public class MainWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
-        myPlayer = new Player();
-        enemy = new Player();
-
         cardPack = new ArrayList<>();
         cardPack.add(new Tank());
 
@@ -51,15 +48,26 @@ public class MainWindow extends JFrame {
 
     public void run()
     {
-        for(int i = 0; i < 5; i++)
-        {
-            myPlayer.addRandomCardToHand(cardPack);
-            enemy.addRandomCardToHand(cardPack);
+        for(int i = 0; i < 3; i++) {
+            gameBoard.myPlayer.addRandomCardToHand(cardPack);
+            gameBoard.enemy.addRandomCardToHand(cardPack);
         }
 
         while(!endOfGame)
         {
-            ;
+            gameBoard.myPlayer.startNewTurn(cardPack);
+            gameBoard.repaint();
+
+            gameBoard.myPlayer.chooseCardFromHand(gameBoard);
+
+
+            gameBoard.enemy.startNewTurn(cardPack);
+            gameBoard.repaint();
+
+            JOptionPane.showConfirmDialog(
+                    null,"twoj ruch"
+            );
+
         }
     }
 
