@@ -3,6 +3,7 @@ package game;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MainWindow extends JFrame {
 
@@ -42,6 +43,7 @@ public class MainWindow extends JFrame {
 
         cardPack = new ArrayList<>();
         cardPack.add(new Tank());
+        cardPack.add(new Archer());
 
 
     }
@@ -57,16 +59,59 @@ public class MainWindow extends JFrame {
         {
             gameBoard.myPlayer.startNewTurn(cardPack);
             gameBoard.repaint();
-
             gameBoard.myPlayer.chooseCardFromHand(gameBoard);
+            gameBoard.repaint();
 
+            while (gameBoard.myPlayer.canStillAttack())
+            {
+                int mySelectedCard = -1;
+                int enemySelectedCard = -1;
+                do {
+                    String response = JOptionPane.showInputDialog(null, "Kim", "", JOptionPane.QUESTION_MESSAGE);
+                    mySelectedCard = Integer.parseInt(response);
+                }
+                while (mySelectedCard<0 || mySelectedCard>=gameBoard.myPlayer.cards.size()  || gameBoard.myPlayer.cards.get(mySelectedCard).isHasAttacked() );
+                do {
+                    String response = JOptionPane.showInputDialog(null, "Kogo", "", JOptionPane.QUESTION_MESSAGE);
+                    enemySelectedCard = Integer.parseInt(response);
+                }
+                while(enemySelectedCard<0 || enemySelectedCard>=gameBoard.enemy.cards.size());
+
+                gameBoard.myPlayer.cards.get(mySelectedCard).attack(gameBoard.myPlayer.cards,gameBoard.enemy.cards,Integer.toString(enemySelectedCard));
+                gameBoard.myPlayer.cards.get(mySelectedCard).setHasAttacked(true);
+
+                gameBoard.enemy.cleanDead();
+                gameBoard.repaint();
+            }
+
+            gameBoard.myPlayer.endTheTurn();
+
+            JOptionPane.showConfirmDialog(null,"zakoncz kolejkę");
 
             gameBoard.enemy.startNewTurn(cardPack);
             gameBoard.repaint();
+            gameBoard.enemy.drawCardFromHand();
+            gameBoard.repaint();
 
-            JOptionPane.showConfirmDialog(
-                    null,"twoj ruch"
-            );
+            while (gameBoard.enemy.canStillAttack())
+            {
+                for(int i = 0; i < gameBoard.enemy.cards.size();i++)
+                {
+                    if(!gameBoard.enemy.cards.get(i).isHasAttacked())
+                    {
+                        int mySelectedCard = i;
+                        Random rm = new Random();
+                        int enemySelectedCard = rm.nextInt(gameBoard.myPlayer.cards.size());
+
+                        gameBoard.enemy.cards.get(mySelectedCard).attack(gameBoard.enemy.cards, gameBoard.myPlayer.cards, Integer.toString(enemySelectedCard));
+                        gameBoard.enemy.cards.get(mySelectedCard).setHasAttacked(true);
+
+                        gameBoard.myPlayer.cleanDead();
+                        gameBoard.repaint();
+                    }
+                }
+            }
+            gameBoard.enemy.endTheTurn();
 
         }
     }

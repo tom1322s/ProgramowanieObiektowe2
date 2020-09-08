@@ -47,6 +47,9 @@ public class Player {
             //System.out.println("System rule is instance of Rule");
             handCards.add(new Tank((Tank)cardPack.get(randomInt)));
         }
+        else if(cardPack.get(randomInt) instanceof Archer){
+            handCards.add(new Archer((Archer)cardPack.get(randomInt)));
+        }
 
         //System.out.println(cardPack.get(randomInt).getClass().getName());
         //System.out.println(cardPack.get(randomInt).getClass().descriptorString());
@@ -99,27 +102,29 @@ public class Player {
 
     public void chooseCardFromHand(GameBoard gb)
     {
-        int selectedCard = -1;
+        int selectedCard = 0;
         //System.out.println(selectedCard!=0);
-        while(isAbleToTakeCardFormHand()  && selectedCard!=0)
+        while(isAbleToTakeCardFormHand()  && selectedCard!=-1)
         {
-            System.out.println("jestem");
             boolean manaEnough = false;
             do {
-                JOptionPane.showConfirmDialog(
-                        null,"ruch"
-                );
-                String response = JOptionPane.showInputDialog(null, "Wybierz karte \n 0 jesli nic", "", JOptionPane.QUESTION_MESSAGE);
-                selectedCard = Integer.parseInt(response);
-                if(handCards.get(selectedCard).getCost() <= mana)
+                String response = JOptionPane.showInputDialog(null, "Wybierz karte \n -1 jesli nic", "", JOptionPane.QUESTION_MESSAGE);
+                if(response.isEmpty()) selectedCard = -1;
+                else selectedCard = Integer.parseInt(response);
+
+                if(selectedCard>=0 && selectedCard<handCards.size())
                 {
-                    mana -= handCards.get(selectedCard).getCost();
-                    manaEnough = true;
+                    if (handCards.get(selectedCard).getCost() <= mana) {
+                        mana -= handCards.get(selectedCard).getCost();
+                        manaEnough = true;
+                        gb.repaint();
+                    }
                 }
             }
-            while(selectedCard!=0 && !manaEnough);
+            while(selectedCard!=-1 && !manaEnough);
 
-            cards.add(handCards.remove(selectedCard));
+            if(selectedCard != -1)
+                cards.add(handCards.remove(selectedCard));
         }
     }
 
@@ -131,5 +136,57 @@ public class Player {
             if(mana >= i.getCost()) result = true;
         }
         return result;
+    }
+
+    public void drawCardFromHand()
+    {
+        int selectedCard = -1;
+        while(isAbleToTakeCardFormHand())
+        {
+            boolean manaEnough = false;
+            do {
+                Random rm = new Random();
+                selectedCard = rm.nextInt(handCards.size());
+                System.out.println(selectedCard);
+                if(handCards.get(selectedCard).getCost() <= mana)
+                {
+                    mana -= handCards.get(selectedCard).getCost();
+                    manaEnough = true;
+                }
+            }
+            while(!manaEnough);
+
+            cards.add(handCards.remove(selectedCard));
+        }
+    }
+
+    public boolean canStillAttack()
+    {
+        boolean result = false;
+        for(var i : cards)
+        {
+            if(!i.isHasAttacked()) result=true;
+        }
+        return result;
+    }
+
+    public void cleanDead()
+    {
+        for(int i = 0; i < cards.size(); i++)
+        {
+            if(cards.get(i).getHealth() <= 0)
+            {
+                cards.remove(i);
+                i--;
+            }
+        }
+    }
+
+    public void endTheTurn()
+    {
+        for(int i = 0; i < cards.size(); i++)
+        {
+            cards.get(i).setHasAttacked(false);
+        }
     }
 }

@@ -93,9 +93,10 @@ public class GameBoard extends JPanel {
             paintCard(comp2D, myPlayer.handCards.get(i),cardsX + i * spaceX + i *cardSizeX,cardsY,cardSizeX,cardSizeY);
         }
 
+        comp2D.setColor(Color.BLUE);
         for(int i = 0; i < enemy.handCards.size(); i++)
         {
-            paintCard(comp2D, enemy.handCards.get(i),cardsX + i * spaceX + i *cardSizeX,enemyCardsY,cardSizeX,cardSizeY);
+            comp2D.fillRect(cardsX + i * spaceX + i *cardSizeX,enemyCardsY,cardSizeX,cardSizeY);
         }
     }
 
@@ -129,7 +130,8 @@ public class GameBoard extends JPanel {
 
     public void paintCards(Graphics2D comp2D)
     {
-        int numberOfCardsInHand = myPlayer.cards.size();
+        int numberOfCardsOnBoard = myPlayer.cards.size();
+        int numberOfCardsOnBoardEnemy = enemy.cards.size();
         int maxHandRectSizeX = (int)(0.8 * getWidth());
         int maxHandRectSizeY = (int)(0.23 * getHeight());
         comp2D.setColor(Color.GREEN);
@@ -139,9 +141,11 @@ public class GameBoard extends JPanel {
         int spaceX = maxHandRectSizeX/(Player.MAX_BOARD_CARDS*(CARD_X_PROPORTION+1)-1);
         int cardSizeX = spaceX * CARD_X_PROPORTION;
         int cardSizeY = maxHandRectSizeY;
-        int cardsX = (int)(0.5*getWidth()-(0.5*maxHandRectSizeX));
-        int cardsY = (int)(getHeight()-(0.02*getHeight()+maxHandRectSizeY));
-        int enemyCardsY = (int)(0.02*getHeight());
+
+        int cardsX = (int)(0.5*getWidth()-(numberOfCardsOnBoard*0.5*cardSizeX+(numberOfCardsOnBoard-1)*0.5*spaceX));
+        int cardsY = (int)(getHeight()-(0.25*getHeight()+maxHandRectSizeY));
+        int enemyCardsX = (int)(0.5*getWidth()-(numberOfCardsOnBoardEnemy*0.5*cardSizeX+(numberOfCardsOnBoardEnemy-1)*0.5*spaceX));
+        int enemyCardsY = (int)(0.25*getHeight());
 
         for(int i = 0; i < myPlayer.cards.size(); i++)
         {
@@ -150,7 +154,7 @@ public class GameBoard extends JPanel {
 
         for(int i = 0; i < enemy.cards.size(); i++)
         {
-            paintCard(comp2D, enemy.cards.get(i),cardsX + i * spaceX + i *cardSizeX,enemyCardsY,cardSizeX,cardSizeY);
+            paintCard(comp2D, enemy.cards.get(i),enemyCardsX + i * spaceX + i *cardSizeX,enemyCardsY,cardSizeX,cardSizeY);
         }
     }
 

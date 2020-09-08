@@ -58,6 +58,10 @@ public interface CardInterface extends Cloneable{
 
     public void setHealing(int healing);
 
-    public int countRealAttack(int attackDamage, int magicDamage);
+    public void countRealAttack(int attackDamage, int magicDamage);
+
+    public boolean isHasAttacked();
+
+    public void setHasAttacked(boolean hasAttacked);
 
 }
