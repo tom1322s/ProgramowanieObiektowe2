@@ -11,6 +11,12 @@ public class Archer extends Card{
         super(archer.name,archer.id,archer.cost,archer.description,archer.health,archer.attackDamage,archer.magicDamage,archer.armor,archer.magicResistance,archer.isPoisoned,archer.poisoned,archer.isHealth,archer.healing);
     }
 
+    @Override
+    public CardInterface clonee() {
+        Archer archer = new Archer(this);
+        return (CardInterface) archer;
+    }
+
 
     // binarnie czy atakowac czy nie jako int
     @Override

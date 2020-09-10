@@ -1,6 +1,7 @@
 package game;
 
 import javax.swing.*;
+import java.awt.*;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -43,13 +44,15 @@ public class Player {
         int randomInt = r.nextInt(cardPack.size());
 
 
-        if(cardPack.get(randomInt) instanceof Tank){
+        /*if(cardPack.get(randomInt) instanceof Tank){
             //System.out.println("System rule is instance of Rule");
             handCards.add(new Tank((Tank)cardPack.get(randomInt)));
         }
         else if(cardPack.get(randomInt) instanceof Archer){
             handCards.add(new Archer((Archer)cardPack.get(randomInt)));
-        }
+        }*/
+
+        handCards.add(cardPack.get(randomInt).clonee());
 
         //System.out.println(cardPack.get(randomInt).getClass().getName());
         //System.out.println(cardPack.get(randomInt).getClass().descriptorString());
@@ -100,7 +103,7 @@ public class Player {
         }
     }
 
-    public void chooseCardFromHand(GameBoard gb)
+    /*public void chooseCardFromHand(GameBoard gb)
     {
         int selectedCard = 0;
         //System.out.println(selectedCard!=0);
@@ -126,9 +129,9 @@ public class Player {
             if(selectedCard != -1)
                 cards.add(handCards.remove(selectedCard));
         }
-    }
+    }*/
 
-    private boolean isAbleToTakeCardFormHand()
+    public boolean isAbleToTakeCardFormHand()
     {
         boolean result = false;
         for(var i : handCards)
@@ -189,4 +192,17 @@ public class Player {
             cards.get(i).setHasAttacked(false);
         }
     }
+
+    public int checkInList (Point point, ArrayList<CardInterface> list) {
+        for(int i = 0; i < list.size(); i++)
+        {
+            Point start = list.get(i).getPoint();
+            Point size = list.get(i).getSize();
+            if(point.x>= start.x && point.x<= start.x+size.x && point.y>= start.y && point.y<= start.y+size.y)
+                return i;
+        }
+        return -1;
+    }
+
+
 }

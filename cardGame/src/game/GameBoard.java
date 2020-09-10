@@ -2,10 +2,12 @@ package game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 
-public class GameBoard extends JPanel {
+public class GameBoard extends JPanel implements MouseListener {
 
 
     public Player myPlayer = new Player();
@@ -14,6 +16,79 @@ public class GameBoard extends JPanel {
     public static final int HAND_CARD_X_PROPORTION = 10;
     public static final int CARD_X_PROPORTION = 10;
 
+    private int who;
+    private boolean underAttackFlag = false;
+
+
+    public GameBoard() {
+        addMouseListener(this);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if(underAttackFlag) {
+            underAttackFlag = false;
+            repaint();
+        }
+        //System.out.println("jestem");
+        Point point = e.getPoint();
+        
+        int selectedCard = myPlayer.checkInList(point,myPlayer.handCards);
+        //System.out.println(selectedCard);
+        if(selectedCard >= 0 )
+        {
+            if(myPlayer.getMana() >= myPlayer.handCards.get(selectedCard).getCost())
+            {
+                //System.out.println("jestem w");
+                myPlayer.setMana(myPlayer.getMana() - myPlayer.handCards.get(selectedCard).getCost());
+                myPlayer.cards.add(myPlayer.handCards.remove(selectedCard));
+                repaint();
+            }
+        }
+
+        selectedCard = myPlayer.checkInList(point,myPlayer.cards);
+        //System.out.println(selectedCard);
+        if(selectedCard >= 0 )
+        {
+            if(!myPlayer.cards.get(selectedCard).isHasAttacked())
+            {
+                who = selectedCard;
+                underAttackFlag = true;
+                repaint();
+            }
+        }
+
+        selectedCard = myPlayer.checkInList(point,enemy.cards);
+        //System.out.println(selectedCard);
+        if(selectedCard >= 0 )
+        {
+            myPlayer.cards.get(who).attack(myPlayer.cards,enemy.cards,Integer.toString(selectedCard));
+            myPlayer.cards.get(who).setHasAttacked(true);
+
+            enemy.cleanDead();
+            repaint();
+        }
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
 
     public void paintComponent(Graphics comp)
     {
@@ -102,8 +177,16 @@ public class GameBoard extends JPanel {
 
     public void paintCard(Graphics2D comp2D,CardInterface card, int x, int y, int sizeX, int sizeY)
     {
-        comp2D.setColor(Color.RED);
+        if(card.isHasAttacked())
+            comp2D.setColor(Color.RED);
+        else if(underAttackFlag)
+            comp2D.setColor(Color.BLUE);
+        else
+            comp2D.setColor(Color.GREEN);
         comp2D.fillRect(x,y,sizeX,sizeY);
+
+        card.setPoint(new Point(x,y));
+        card.setSize(new Point(sizeX,sizeY));
 
         Font f = new Font("Dialog", Font.BOLD,(int)(0.12*sizeY));
         comp2D.setFont(f);
@@ -134,9 +217,9 @@ public class GameBoard extends JPanel {
         int numberOfCardsOnBoardEnemy = enemy.cards.size();
         int maxHandRectSizeX = (int)(0.8 * getWidth());
         int maxHandRectSizeY = (int)(0.23 * getHeight());
-        comp2D.setColor(Color.GREEN);
-        comp2D.fillRect((int)(0.5*getWidth()-(0.5*maxHandRectSizeX)),(int)(0.25*getHeight()),maxHandRectSizeX,maxHandRectSizeY);
-        comp2D.fillRect((int)(0.5*getWidth()-(0.5*maxHandRectSizeX)),(int)(getHeight()-(0.25*getHeight()+maxHandRectSizeY)),maxHandRectSizeX,maxHandRectSizeY);
+        //comp2D.setColor(Color.GREEN);
+        //comp2D.fillRect((int)(0.5*getWidth()-(0.5*maxHandRectSizeX)),(int)(0.25*getHeight()),maxHandRectSizeX,maxHandRectSizeY);
+        //comp2D.fillRect((int)(0.5*getWidth()-(0.5*maxHandRectSizeX)),(int)(getHeight()-(0.25*getHeight()+maxHandRectSizeY)),maxHandRectSizeX,maxHandRectSizeY);
 
         int spaceX = maxHandRectSizeX/(Player.MAX_BOARD_CARDS*(CARD_X_PROPORTION+1)-1);
         int cardSizeX = spaceX * CARD_X_PROPORTION;

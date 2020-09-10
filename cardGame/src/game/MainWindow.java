@@ -2,15 +2,20 @@ package game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements ActionListener {
 
     private boolean endOfGame = false;
+    private boolean endOfTurn = false;
     private ArrayList<CardInterface>cardPack;
 
     private GameBoard gameBoard;
+    private JButton endTurnButton;
+
 
     public MainWindow(){
         super("CARD GAME");
@@ -23,11 +28,12 @@ public class MainWindow extends JFrame {
         //FlowLayout flowLayout = new FlowLayout(FlowLayout.CENTER);
         //setLayout(flowLayout);
 
-        JButton endTurnButton = new JButton("Zakończ kolejkę");
+        endTurnButton = new JButton("Zakończ kolejkę");
         gameBoard = new GameBoard();
         //gameBoard.setMinimumSize(new Dimension(500,500));
 
         endTurnButton.setAlignmentX(JButton.CENTER_ALIGNMENT);
+        endTurnButton.addActionListener(this);
 
         panel.add(endTurnButton);
         panel.add(gameBoard);
@@ -48,6 +54,43 @@ public class MainWindow extends JFrame {
 
     }
 
+    public void actionPerformed (ActionEvent event)
+    {
+        Object source = event.getSource();
+        if(source == endTurnButton) {
+            //endOfTurn = true;
+            gameBoard.myPlayer.endTheTurn();
+
+            gameBoard.enemy.startNewTurn(cardPack);
+            gameBoard.repaint();
+            gameBoard.enemy.drawCardFromHand();
+            gameBoard.repaint();
+
+            while (gameBoard.enemy.canStillAttack())
+            {
+                for(int i = 0; i < gameBoard.enemy.cards.size();i++)
+                {
+                    if(!gameBoard.enemy.cards.get(i).isHasAttacked())
+                    {
+                        int mySelectedCard = i;
+                        Random rm = new Random();
+                        int enemySelectedCard = rm.nextInt(gameBoard.myPlayer.cards.size());
+
+                        gameBoard.enemy.cards.get(mySelectedCard).attack(gameBoard.enemy.cards, gameBoard.myPlayer.cards, Integer.toString(enemySelectedCard));
+                        gameBoard.enemy.cards.get(mySelectedCard).setHasAttacked(true);
+
+                        gameBoard.myPlayer.cleanDead();
+                        gameBoard.repaint();
+                    }
+                }
+            }
+            gameBoard.enemy.endTheTurn();
+
+            gameBoard.myPlayer.startNewTurn(cardPack);
+            gameBoard.repaint();
+        }
+    }
+
     public void run()
     {
         for(int i = 0; i < 3; i++) {
@@ -55,12 +98,32 @@ public class MainWindow extends JFrame {
             gameBoard.enemy.addRandomCardToHand(cardPack);
         }
 
+        gameBoard.myPlayer.startNewTurn(cardPack);
+        gameBoard.repaint();
+
         while(!endOfGame)
         {
-            gameBoard.myPlayer.startNewTurn(cardPack);
+            try{
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            /*gameBoard.myPlayer.startNewTurn(cardPack);
             gameBoard.repaint();
-            gameBoard.myPlayer.chooseCardFromHand(gameBoard);
-            gameBoard.repaint();
+            //gameBoard.myPlayer.chooseCardFromHand(gameBoard);
+            //gameBoard.repaint();
+
+            while(!endOfTurn)
+            {
+                //System.out.println("czekam");
+                try{
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            endOfTurn = false;
 
             while (gameBoard.myPlayer.canStillAttack())
             {
@@ -112,7 +175,7 @@ public class MainWindow extends JFrame {
                 }
             }
             gameBoard.enemy.endTheTurn();
-
+*/
         }
     }
 

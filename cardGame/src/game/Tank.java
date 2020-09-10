@@ -11,6 +11,11 @@ public class Tank extends Card{
         super(tank.name,tank.id,tank.cost,tank.description,tank.health,tank.attackDamage,tank.magicDamage,tank.armor,tank.magicResistance,tank.isPoisoned,tank.poisoned,tank.isHealth,tank.healing);
     }
 
+    @Override
+    public CardInterface clonee() {
+        Tank tank = new Tank(this);
+        return (CardInterface) tank;
+    }
 
     // binarnie czy atakowac czy nie jako int
     @Override

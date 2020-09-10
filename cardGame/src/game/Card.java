@@ -1,5 +1,7 @@
 package game;
 
+import java.awt.*;
+
 public abstract class Card implements CardInterface{
 
     protected String name;
@@ -19,6 +21,9 @@ public abstract class Card implements CardInterface{
     protected int healing;
 
     protected boolean hasAttacked = true;
+
+    protected Point point = new Point(0,0);
+    protected Point size = new Point(0,0);
 
     public Card(String name, int id, int cost, String description, int health, int attackDamage, int magicDamage, double armor, double magicResistance, boolean isPoisoned, int poisoned, boolean isHealth, int healing) {
         this.name = name;
@@ -151,5 +156,21 @@ public abstract class Card implements CardInterface{
 
     public void setHasAttacked(boolean hasAttacked) {
         this.hasAttacked = hasAttacked;
+    }
+
+    public Point getPoint() {
+        return point;
+    }
+
+    public void setPoint(Point point) {
+        this.point = point;
+    }
+
+    public Point getSize() {
+        return size;
+    }
+
+    public void setSize(Point size) {
+        this.size = size;
     }
 }

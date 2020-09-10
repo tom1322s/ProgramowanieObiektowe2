@@ -1,8 +1,9 @@
 package game;
 
+import java.awt.*;
 import java.util.ArrayList;
 
-public interface CardInterface extends Cloneable{
+public interface CardInterface{
 
 
     public void attack(ArrayList<CardInterface> myList, ArrayList<CardInterface> enemyList, String info);
@@ -63,5 +64,15 @@ public interface CardInterface extends Cloneable{
     public boolean isHasAttacked();
 
     public void setHasAttacked(boolean hasAttacked);
+
+    public CardInterface clonee();
+
+    public Point getPoint();
+
+    public void setPoint(Point point);
+
+    public Point getSize();
+
+    public void setSize(Point size);
 
 }
