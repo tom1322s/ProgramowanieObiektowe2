@@ -50,6 +50,13 @@ public class MainWindow extends JFrame implements ActionListener {
         cardPack = new ArrayList<>();
         cardPack.add(new Tank());
         cardPack.add(new Archer());
+        cardPack.add(new Peasant());
+        cardPack.add(new Magician());
+        cardPack.add(new Dragon());
+        cardPack.add(new Healer());
+        cardPack.add(new Fairy());
+        cardPack.add(new Cannon());
+        cardPack.add(new MagicCannon());
 
 
     }
@@ -107,6 +114,14 @@ public class MainWindow extends JFrame implements ActionListener {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+
+            if(gameBoard.myPlayer.getManaCapacity()>5)
+            {
+                if(gameBoard.myPlayer.cards.size()==0 || gameBoard.enemy.cards.size()==0)
+                {
+                    endOfGame = true;
+                }
             }
 
             /*gameBoard.myPlayer.startNewTurn(cardPack);

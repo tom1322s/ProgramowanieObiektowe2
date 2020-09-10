@@ -51,14 +51,6 @@ public interface CardInterface{
 
     public void setPoisoned(int poisoned);
 
-    public boolean getIsHealth() ;
-
-    public void setIsHealth(boolean isHealth);
-
-    public int getHealing();
-
-    public void setHealing(int healing);
-
     public void countRealAttack(int attackDamage, int magicDamage);
 
     public boolean isHasAttacked();

@@ -35,7 +35,7 @@ public class GameBoard extends JPanel implements MouseListener {
         
         int selectedCard = myPlayer.checkInList(point,myPlayer.handCards);
         //System.out.println(selectedCard);
-        if(selectedCard >= 0 )
+        if(selectedCard >= 0 && myPlayer.cards.size() < Player.MAX_BOARD_CARDS)
         {
             if(myPlayer.getMana() >= myPlayer.handCards.get(selectedCard).getCost())
             {

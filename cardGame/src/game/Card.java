@@ -17,15 +17,12 @@ public abstract class Card implements CardInterface{
     protected boolean isPoisoned;
     protected int poisoned;
 
-    protected boolean isHealth;
-    protected int healing;
-
     protected boolean hasAttacked = true;
 
     protected Point point = new Point(0,0);
     protected Point size = new Point(0,0);
 
-    public Card(String name, int id, int cost, String description, int health, int attackDamage, int magicDamage, double armor, double magicResistance, boolean isPoisoned, int poisoned, boolean isHealth, int healing) {
+    public Card(String name, int id, int cost, String description, int health, int attackDamage, int magicDamage, double armor, double magicResistance, boolean isPoisoned, int poisoned) {
         this.name = name;
         this.id = id;
         this.cost = cost;
@@ -37,8 +34,6 @@ public abstract class Card implements CardInterface{
         this.magicResistance = magicResistance;
         this.isPoisoned = isPoisoned;
         this.poisoned = poisoned;
-        this.isHealth = isHealth;
-        this.healing = healing;
     }
 
     public String getDescription() {
@@ -127,22 +122,6 @@ public abstract class Card implements CardInterface{
 
     public void setPoisoned(int poisoned) {
         this.poisoned = poisoned;
-    }
-
-    public boolean getIsHealth() {
-        return isHealth;
-    }
-
-    public void setIsHealth(boolean isHealth) {
-        this.isHealth = isHealth;
-    }
-
-    public int getHealing() {
-        return healing;
-    }
-
-    public void setHealing(int healing) {
-        this.healing = healing;
     }
 
     public void countRealAttack(int attackDamage, int magicDamage)

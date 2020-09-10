@@ -2,19 +2,19 @@ package game;
 
 import java.util.ArrayList;
 
-public class Tank extends Card{
-    public Tank() {
-        super("Tank", 0001, 3, "he is tanky", 400, 50, 0, 0.7, 0.7, false, 0);
+public class Fairy extends Card{
+    public Fairy() {
+        super("Fairy", 0007, 2, "she is tiny", 200, 10, 160, 0.3, 0.4, false, 0);
     }
 
-    public Tank(Tank tank){
-        super(tank.name,tank.id,tank.cost,tank.description,tank.health,tank.attackDamage,tank.magicDamage,tank.armor,tank.magicResistance,tank.isPoisoned,tank.poisoned);
+    public Fairy(Fairy fairy){
+        super(fairy.name,fairy.id,fairy.cost,fairy.description,fairy.health,fairy.attackDamage,fairy.magicDamage,fairy.armor,fairy.magicResistance,fairy.isPoisoned,fairy.poisoned);
     }
 
     @Override
     public CardInterface clonee() {
-        Tank tank = new Tank(this);
-        return (CardInterface) tank;
+        Fairy fairy = new Fairy(this);
+        return (CardInterface) fairy;
     }
 
     // binarnie czy atakowac czy nie jako int
