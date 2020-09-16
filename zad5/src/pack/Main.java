@@ -1,6 +1,7 @@
 package pack;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -19,7 +20,7 @@ public class Main {
 
     public void run()
     {
-        FileInputStream inputFile = openFile();
+        BufferedReader inputFile = openFile();
 
         printRandomChars(inputFile);
 
@@ -32,12 +33,12 @@ public class Main {
 
     }
 
-    public FileInputStream openFile()
+    public BufferedReader openFile()
     {
-        FileInputStream inputFile = null;
+        FileReader fr = null;
 
         boolean ok = false;
-        String inputName = new String("blad");
+        String inputName = new String();
         while (!ok) {
             System.out.println("Podaj sciezke do pliku ktory chcesz otworzyc");
 
@@ -45,27 +46,35 @@ public class Main {
             //System.out.println(inputName);
             ok = true;
             try {
-                inputFile = new FileInputStream(inputName);
-            }
-            catch (FileNotFoundException e) {
+                fr = new FileReader(inputName);
+            } catch (IOException e) {
                 //e.printStackTrace();
                 ok = false;
             }
+
         }
+
+        BufferedReader br = new BufferedReader(fr);
 
         RandomAccessFile out = null;
 
         try {
             out = new RandomAccessFile("logs.txt","rw");
 
-            /*
-            kod sprawdzajacy czy sie nie powtarza
+            ArrayList<String> logs = new ArrayList<>();
+            String inString = new String("c");
+            while(inString!=null)
+            {
+                inString = out.readLine();
+                System.out.println(inString);
+                if(inString!=null) logs.add(new String(inString));
+            }
 
-             */
-
-            out.seek(out.length());
-            inputName += new String("\n");
-            out.write(inputName.getBytes());
+            if(!logs.contains(inputName)) {
+                out.seek(out.length());
+                inputName += new String("\n");
+                out.write(inputName.getBytes());
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -81,28 +90,29 @@ public class Main {
         }
 
 
-        return inputFile;
+        return br;
     }
 
-    public void printRandomChars(FileInputStream inputFile)
+    public void printRandomChars(BufferedReader inputFile)
     {
-        byte[] bytes = new byte[1];
-        bytes[0] = 1;
-        while(bytes[0]!=0)
+        char[] c = new char[1];
+        c[0] = '1';
+        while(c[0]!=0)
         {
+            System.out.print("press enter");
             try{
                 System.in.read();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            bytes= new byte[(int) (1+(Math.random()*5))];
+            c= new char[(int) (1+(Math.random()*5))];
             try {
-                inputFile.read(bytes);
+                inputFile.read(c);
             } catch (IOException e) {
                 e.printStackTrace();
                 //break;
             }
-            System.out.println(new String(bytes));
+            System.out.println(c);
         }
     }
 }
