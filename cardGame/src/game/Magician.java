@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Magician extends Card{
     public Magician() {
-        super("Magician", 0004, 3, "ton of MD", 250, 20, 200, 0.2, 0.7, false, 0);
+        super("Magician", 0004, 3, "ton of MD", 1005, 0, 20, 0.0, 0.5, false, 0);
     }
 
     public Magician(Magician magician){
@@ -23,7 +23,7 @@ public class Magician extends Card{
 
         int goal = Integer.parseInt(info);
 
-        enemyList.get(goal).countRealAttack(this.getAttackDamage(),this.getMagicDamage());
+        standardAttack(enemyList.get(goal));
 
     }
 }

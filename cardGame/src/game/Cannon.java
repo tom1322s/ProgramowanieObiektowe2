@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Cannon extends Card{
     public Cannon() {
-        super("Cannon", 8, 4, "deals area damage", 500, 400, 0, 0.7, 0.2, false, 0);
+        super("Cannon", 8, 4, "deals area damage", 5000, 400, 0, 0.7, 0.2, false, 0);
     }
 
     public Cannon(Cannon cannon){

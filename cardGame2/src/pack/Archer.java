@@ -1,18 +1,18 @@
-package game;
+package pack;
 
 import java.util.ArrayList;
 
 public class Archer extends Card{
     public Archer() {
-        super("Archer", 0002, 2, "he has damage", 1000, 20, 0, 0.0, 0.0, false, 0);
+        super("Archer", 0002, 2, "he has damage", 1000, 20, 0, 0.0, 0.0);
     }
 
     public Archer(Archer archer){
-        super(archer.name,archer.id,archer.cost,archer.description,archer.health,archer.attackDamage,archer.magicDamage,archer.armor,archer.magicResistance,archer.isPoisoned,archer.poisoned);
+        super(archer.name,archer.id,archer.cost,archer.description,archer.health,archer.attackDamage,archer.magicDamage,archer.armor,archer.magicResistance);
     }
 
     @Override
-    public CardInterface clonee() {
+    public CardInterface copy() {
         Archer archer = new Archer(this);
         return (CardInterface) archer;
     }
@@ -24,7 +24,7 @@ public class Archer extends Card{
 
         int goal = Integer.parseInt(info);
 
-        standardAttack(enemyList.get(goal));
+        //standardAttack(enemyList.get(goal));
 
     }
 }

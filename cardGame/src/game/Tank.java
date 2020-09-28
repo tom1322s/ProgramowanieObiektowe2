@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Tank extends Card{
     public Tank() {
-        super("Tank", 0001, 3, "he is tanky", 400, 50, 0, 0.7, 0.7, false, 0);
+        super("Tank", 0001, 3, "he is tanky", 2000, 5, 0, 0.5, 0.0, false, 0);
     }
 
     public Tank(Tank tank){

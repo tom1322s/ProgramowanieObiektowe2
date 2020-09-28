@@ -2,71 +2,111 @@ package game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class GameBoard extends JPanel implements MouseListener {
 
 
     public Player myPlayer = new Player();
     public Player enemy = new Player();
+    public ArrayList<CardInterface> cardPack;
+    public Timer timer = new Timer(10, new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+
+            CardInterface card = myPlayer.findMoving();
+            if(card == null) card = enemy.findMoving();
+            if(card.getMovingGoal().equals(card.getPoint()))
+            {
+                System.out.println("c "+ card.getMovingGoal());
+                if(card.getMovingGoal().equals(tempPoint)) {
+                    //System.out.println("jestem o");
+                    card.setMoving(false);
+                    boolean tempBool = false;
+                    if(enemy.cards.contains(card)) tempBool = true;
+                    enemy.cleanDead();
+                    myPlayer.cleanDead();
+                    repaint();
+                    timer.stop();
+                    if(tempBool) enemyAttack();
+                }
+                else{
+                    card.setMovingGoal(tempPoint);
+                    card.moveStepTo();
+                    repaint();
+                    //System.out.println("jestem w");
+                }
+            }
+            else
+            {
+                card.moveStepTo();
+                repaint();
+            }
+        }
+    });
 
     public static final int HAND_CARD_X_PROPORTION = 10;
     public static final int CARD_X_PROPORTION = 10;
 
     private int who;
     private boolean underAttackFlag = false;
+    public Point tempPoint = new Point(0,0);
 
 
-    public GameBoard() {
+    public GameBoard(ArrayList<CardInterface> cardPack) {
         addMouseListener(this);
+        this.cardPack = cardPack;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(underAttackFlag) {
-            underAttackFlag = false;
-            repaint();
-        }
-        //System.out.println("jestem");
-        Point point = e.getPoint();
-        
-        int selectedCard = myPlayer.checkInList(point,myPlayer.handCards);
-        //System.out.println(selectedCard);
-        if(selectedCard >= 0 && myPlayer.cards.size() < Player.MAX_BOARD_CARDS)
-        {
-            if(myPlayer.getMana() >= myPlayer.handCards.get(selectedCard).getCost())
-            {
-                //System.out.println("jestem w");
-                myPlayer.setMana(myPlayer.getMana() - myPlayer.handCards.get(selectedCard).getCost());
-                myPlayer.cards.add(myPlayer.handCards.remove(selectedCard));
+        if(!timer.isRunning()) {
+            if (underAttackFlag) {
+                underAttackFlag = false;
                 repaint();
             }
-        }
+            //System.out.println("jestem");
+            Point point = e.getPoint();
 
-        selectedCard = myPlayer.checkInList(point,myPlayer.cards);
-        //System.out.println(selectedCard);
-        if(selectedCard >= 0 )
-        {
-            if(!myPlayer.cards.get(selectedCard).isHasAttacked())
-            {
-                who = selectedCard;
-                underAttackFlag = true;
-                repaint();
+            int selectedCard = myPlayer.checkInList(point, myPlayer.handCards);
+            //System.out.println(selectedCard);
+            if (selectedCard >= 0 && myPlayer.cards.size() < Player.MAX_BOARD_CARDS) {
+                if (myPlayer.getMana() >= myPlayer.handCards.get(selectedCard).getCost()) {
+                    //System.out.println("jestem w");
+                    myPlayer.setMana(myPlayer.getMana() - myPlayer.handCards.get(selectedCard).getCost());
+                    myPlayer.cards.add(myPlayer.handCards.remove(selectedCard));
+                    repaint();
+                }
             }
-        }
 
-        selectedCard = myPlayer.checkInList(point,enemy.cards);
-        //System.out.println(selectedCard);
-        if(selectedCard >= 0 )
-        {
-            myPlayer.cards.get(who).attack(myPlayer.cards,enemy.cards,Integer.toString(selectedCard));
-            myPlayer.cards.get(who).setHasAttacked(true);
+            selectedCard = myPlayer.checkInList(point, myPlayer.cards);
+            //System.out.println(selectedCard);
+            if (selectedCard >= 0) {
+                if (!myPlayer.cards.get(selectedCard).isHasAttacked()) {
+                    who = selectedCard;
+                    underAttackFlag = true;
+                    repaint();
+                }
+            }
 
-            enemy.cleanDead();
-            repaint();
+            selectedCard = myPlayer.checkInList(point, enemy.cards);
+            //System.out.println(selectedCard);
+            if (selectedCard >= 0) {
+                myPlayer.cards.get(who).attack(myPlayer.cards, enemy.cards, Integer.toString(selectedCard));
+                myPlayer.cards.get(who).setHasAttacked(true);
+                tempPoint.setLocation(myPlayer.cards.get(who).getPoint());
+
+                myPlayer.cards.get(who).setMoving(true);
+                myPlayer.cards.get(who).setMovingGoal(enemy.cards.get(selectedCard).getPoint());
+                timer.start();
+
+            }
         }
 
     }
@@ -102,6 +142,8 @@ public class GameBoard extends JPanel implements MouseListener {
         paintHandCards(comp2D);
 
         paintCards(comp2D);
+
+        paintMovingCards(comp2D);
 
 
     }
@@ -232,12 +274,99 @@ public class GameBoard extends JPanel implements MouseListener {
 
         for(int i = 0; i < myPlayer.cards.size(); i++)
         {
-            paintCard(comp2D, myPlayer.cards.get(i),cardsX + i * spaceX + i *cardSizeX,cardsY,cardSizeX,cardSizeY);
+            if(!myPlayer.cards.get(i).isMoving())
+                paintCard(comp2D, myPlayer.cards.get(i),cardsX + i * spaceX + i *cardSizeX,cardsY,cardSizeX,cardSizeY);
         }
 
         for(int i = 0; i < enemy.cards.size(); i++)
         {
-            paintCard(comp2D, enemy.cards.get(i),enemyCardsX + i * spaceX + i *cardSizeX,enemyCardsY,cardSizeX,cardSizeY);
+            if(!enemy.cards.get(i).isMoving())
+                paintCard(comp2D, enemy.cards.get(i),enemyCardsX + i * spaceX + i *cardSizeX,enemyCardsY,cardSizeX,cardSizeY);
+        }
+    }
+
+    public void paintMovingCards(Graphics2D comp2D)
+    {
+        for(int i = 0; i < myPlayer.cards.size(); i++)
+        {
+            if(myPlayer.cards.get(i).isMoving())
+                paintCard(comp2D, myPlayer.cards.get(i));
+        }
+        for(int i = 0; i < enemy.cards.size(); i++)
+        {
+            if(enemy.cards.get(i).isMoving())
+                paintCard(comp2D, enemy.cards.get(i));
+        }
+    }
+
+    public void paintCard(Graphics2D comp2D,CardInterface card)
+    {
+        int x =card.getPoint().x;
+        int y = card.getPoint().y;
+        int sizeX = card.getSize().x;
+        int sizeY = card.getSize().y;
+
+        comp2D.setColor(Color.RED);
+        comp2D.fillRect(x,y,sizeX,sizeY);
+
+        Font f = new Font("Dialog", Font.BOLD,(int)(0.12*sizeY));
+        comp2D.setFont(f);
+        comp2D.setColor(Color.BLACK);
+
+        comp2D.drawString(Integer.toString(card.getCost()),(int) (x+0.1*sizeX),(int) (y+0.1*sizeY));
+        comp2D.drawString(card.getName(),(int) (x+0.3*sizeX),(int) (y+0.1*sizeY));
+
+        Font f2 = new Font("Dialog", Font.BOLD,(int)(0.08*sizeY));
+        comp2D.setFont(f2);
+
+        comp2D.drawString("AD: " + Integer.toString(card.getAttackDamage()),(int) (x+0.1*sizeX),(int) (y+0.23*sizeY));
+        comp2D.drawString("MD: " + Integer.toString(card.getMagicDamage()),(int) (x+0.1*sizeX),(int) (y+0.31*sizeY));
+        comp2D.drawString("H: " + Integer.toString(card.getHealth()),(int) (x+0.1*sizeX),(int) (y+0.39*sizeY));
+        comp2D.drawString("A: " + Double.toString(card.getArmor()),(int) (x+0.1*sizeX),(int) (y+0.47*sizeY));
+        comp2D.drawString("MR: " + Double.toString(card.getMagicResistance()),(int) (x+0.1*sizeX),(int) (y+0.55*sizeY));
+
+        Font f3 = new Font("Dialog", Font.PLAIN,(int)(0.08*sizeY));
+        comp2D.setFont(f3);
+
+        comp2D.drawString(card.getDescription(),(int) (x+0.1*sizeX),(int) (y+0.65*sizeY));
+
+    }
+
+    public void enemyAttack()
+    {
+        if (enemy.canStillAttack() && myPlayer.cards.size()!=0)
+        {
+            for(int i = 0; i < enemy.cards.size();i++)
+            {
+                if(!enemy.cards.get(i).isHasAttacked())
+                {
+                    int mySelectedCard = i;
+                    Random rm = new Random();
+                    int enemySelectedCard = rm.nextInt(myPlayer.cards.size());
+
+                    enemy.cards.get(mySelectedCard).attack(enemy.cards, myPlayer.cards, Integer.toString(enemySelectedCard));
+                    enemy.cards.get(mySelectedCard).setHasAttacked(true);
+
+                    //gameBoard.myPlayer.cleanDead();
+                    //gameBoard.enemy.cleanDead();
+                    //gameBoard.repaint();
+
+                    tempPoint.setLocation(enemy.cards.get(mySelectedCard).getPoint());
+                    System.out.println("set"+tempPoint);
+
+                    enemy.cards.get(mySelectedCard).setMoving(true);
+                    enemy.cards.get(mySelectedCard).setMovingGoal(myPlayer.cards.get(enemySelectedCard).getPoint());
+                    timer.start();
+                    break;
+
+                }
+            }
+        }
+        else {
+            enemy.endTheTurn();
+
+            myPlayer.startNewTurn(cardPack);
+            repaint();
         }
     }
 

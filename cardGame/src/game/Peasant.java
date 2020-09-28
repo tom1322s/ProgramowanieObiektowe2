@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Peasant extends Card{
     public Peasant() {
-        super("Peasant", 0003, 1, "he is week", 120, 100, 0, 0.4, 0.4, false, 0);
+        super("Peasant", 0003, 1, "he is week", 1000, 5, 0, 0.0, 0.0, false, 0);
     }
 
     public Peasant(Peasant peasant){
@@ -23,7 +23,6 @@ public class Peasant extends Card{
 
         int goal = Integer.parseInt(info);
 
-        enemyList.get(goal).countRealAttack(this.getAttackDamage(),this.getMagicDamage());
-
+        standardAttack(enemyList.get(goal));
     }
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Fairy extends Card{
     public Fairy() {
-        super("Fairy", 0007, 2, "she is tiny", 200, 10, 160, 0.3, 0.4, false, 0);
+        super("Fairy", 0007, 2, "she is tiny", 1000, 0, 10, 0.1, 0.5, false, 0);
     }
 
     public Fairy(Fairy fairy){
@@ -23,7 +23,7 @@ public class Fairy extends Card{
 
         int goal = Integer.parseInt(info);
 
-        enemyList.get(goal).countRealAttack(this.getAttackDamage(),this.getMagicDamage());
+        standardAttack(enemyList.get(goal));
 
     }
 }

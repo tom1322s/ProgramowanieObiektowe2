@@ -101,6 +101,11 @@ public class Player {
         if (handCards.size() < MAX_HAND_CARDS) {
             addRandomCardToHand(cardPack);
         }
+
+        for(int i = 0; i < cards.size(); i++)
+        {
+            cards.get(i).setHasGiveBack(false);
+        }
     }
 
     /*public void chooseCardFromHand(GameBoard gb)
@@ -202,6 +207,15 @@ public class Player {
                 return i;
         }
         return -1;
+    }
+
+    public CardInterface findMoving()
+    {
+        for(int i = 0; i < cards.size();i++)
+        {
+            if(cards.get(i).isMoving()) return cards.get(i);
+        }
+        return null;
     }
 
 

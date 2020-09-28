@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class Healer extends Card{
 
-    public int healDamage = 30;
+    public int healDamage = 10;
 
     public Healer() {
-        super("Healer", 0006, 5, "heals everybody", 700, 70, 30, 0.5, 0.7, false, 0);
+        super("Healer", 0006, 5, "heals everybody", 700, 0, 0, 0.0, 0.0, false, 0);
     }
 
     public Healer(Healer healer){
@@ -26,7 +26,7 @@ public class Healer extends Card{
 
         int goal = Integer.parseInt(info);
 
-        enemyList.get(goal).countRealAttack(this.getAttackDamage(),this.getMagicDamage());
+        standardAttack(enemyList.get(goal));
 
         for(int i = 0; i < myList.size(); i++)
         {

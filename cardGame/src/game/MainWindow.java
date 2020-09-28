@@ -16,10 +16,29 @@ public class MainWindow extends JFrame implements ActionListener {
     private GameBoard gameBoard;
     private JButton endTurnButton;
 
+    private Timer timer1s = new Timer(1000, new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+
+            gameBoard.enemyAttack();
+            timer1s.stop();
+        }
+    });
+
 
     public MainWindow(){
         super("CARD GAME");
         JPanel panel = new JPanel();
+
+        cardPack = new ArrayList<>();
+        cardPack.add(new Tank());
+        cardPack.add(new Archer());
+        cardPack.add(new Peasant());
+        cardPack.add(new Magician());
+        cardPack.add(new Dragon());
+        cardPack.add(new Healer());
+        cardPack.add(new Fairy());
+        cardPack.add(new Cannon());
+        cardPack.add(new MagicCannon());
 
         BoxLayout boxLayout = new BoxLayout(panel,BoxLayout.Y_AXIS);
         panel.setLayout(boxLayout);
@@ -29,7 +48,7 @@ public class MainWindow extends JFrame implements ActionListener {
         //setLayout(flowLayout);
 
         endTurnButton = new JButton("Zakończ kolejkę");
-        gameBoard = new GameBoard();
+        gameBoard = new GameBoard(cardPack);
         //gameBoard.setMinimumSize(new Dimension(500,500));
 
         endTurnButton.setAlignmentX(JButton.CENTER_ALIGNMENT);
@@ -47,16 +66,7 @@ public class MainWindow extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
-        cardPack = new ArrayList<>();
-        cardPack.add(new Tank());
-        cardPack.add(new Archer());
-        cardPack.add(new Peasant());
-        cardPack.add(new Magician());
-        cardPack.add(new Dragon());
-        cardPack.add(new Healer());
-        cardPack.add(new Fairy());
-        cardPack.add(new Cannon());
-        cardPack.add(new MagicCannon());
+
 
 
     }
@@ -64,7 +74,7 @@ public class MainWindow extends JFrame implements ActionListener {
     public void actionPerformed (ActionEvent event)
     {
         Object source = event.getSource();
-        if(source == endTurnButton) {
+        if(source == endTurnButton && !gameBoard.timer.isRunning()) {
             //endOfTurn = true;
             gameBoard.myPlayer.endTheTurn();
 
@@ -73,7 +83,9 @@ public class MainWindow extends JFrame implements ActionListener {
             gameBoard.enemy.drawCardFromHand();
             gameBoard.repaint();
 
-            while (gameBoard.enemy.canStillAttack())
+            timer1s.start();
+            //gameBoard.enemyAttack();
+            /*while (gameBoard.enemy.canStillAttack())
             {
                 for(int i = 0; i < gameBoard.enemy.cards.size();i++)
                 {
@@ -86,15 +98,24 @@ public class MainWindow extends JFrame implements ActionListener {
                         gameBoard.enemy.cards.get(mySelectedCard).attack(gameBoard.enemy.cards, gameBoard.myPlayer.cards, Integer.toString(enemySelectedCard));
                         gameBoard.enemy.cards.get(mySelectedCard).setHasAttacked(true);
 
-                        gameBoard.myPlayer.cleanDead();
-                        gameBoard.repaint();
+                        //gameBoard.myPlayer.cleanDead();
+                        //gameBoard.enemy.cleanDead();
+                        //gameBoard.repaint();
+
+                        gameBoard.tempPoint.setLocation(gameBoard.enemy.cards.get(mySelectedCard).getPoint());
+
+                        gameBoard.enemy.cards.get(mySelectedCard).setMoving(true);
+                        gameBoard.enemy.cards.get(mySelectedCard).setMovingGoal(gameBoard.myPlayer.cards.get(enemySelectedCard).getPoint());
+                        gameBoard.timer.start();
+
                     }
                 }
             }
             gameBoard.enemy.endTheTurn();
 
             gameBoard.myPlayer.startNewTurn(cardPack);
-            gameBoard.repaint();
+            gameBoard.repaint();*/
+            //gameBoard.myPlayer.startNewTurn(cardPack);
         }
     }
 
@@ -193,6 +214,42 @@ public class MainWindow extends JFrame implements ActionListener {
 */
         }
     }
+
+    /*public void enemyAttack()
+    {
+        if (gameBoard.enemy.canStillAttack())
+        {
+            for(int i = 0; i < gameBoard.enemy.cards.size();i++)
+            {
+                if(!gameBoard.enemy.cards.get(i).isHasAttacked())
+                {
+                    int mySelectedCard = i;
+                    Random rm = new Random();
+                    int enemySelectedCard = rm.nextInt(gameBoard.myPlayer.cards.size());
+
+                    gameBoard.enemy.cards.get(mySelectedCard).attack(gameBoard.enemy.cards, gameBoard.myPlayer.cards, Integer.toString(enemySelectedCard));
+                    gameBoard.enemy.cards.get(mySelectedCard).setHasAttacked(true);
+
+                    //gameBoard.myPlayer.cleanDead();
+                    //gameBoard.enemy.cleanDead();
+                    //gameBoard.repaint();
+
+                    gameBoard.tempPoint.setLocation(gameBoard.enemy.cards.get(mySelectedCard).getPoint());
+
+                    gameBoard.enemy.cards.get(mySelectedCard).setMoving(true);
+                    gameBoard.enemy.cards.get(mySelectedCard).setMovingGoal(gameBoard.myPlayer.cards.get(enemySelectedCard).getPoint());
+                    gameBoard.timer.start();
+
+                }
+            }
+        }
+        else {
+            gameBoard.enemy.endTheTurn();
+
+            gameBoard.myPlayer.startNewTurn(cardPack);
+            gameBoard.repaint();
+        }
+    }*/
 
 
 }

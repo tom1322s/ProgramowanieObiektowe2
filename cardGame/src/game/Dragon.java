@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Dragon extends Card{
     public Dragon() {
-        super("Dragon", 0005, 8, "Deals damage\n to all champ", 1000, 400, 200, 0.9, 0.5, false, 0);
+        super("Dragon", 0005, 8, "Deals damage\n to all champs", 1000, 400, 200, 0.9, 0.5, false, 0);
     }
 
     public Dragon(Dragon dragon){
