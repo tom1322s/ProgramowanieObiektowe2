@@ -46,4 +46,14 @@ public interface CardInterface {
     public boolean isSpecialMoving();
     public void setSpecialMoving(boolean specialMoving);
     public void move();
+    public void setMovingGoalPlayer(CardInterface goal);
+    public void setMovingGoalEnemy(CardInterface goal);
+    public int getThisTurnDamage();
+    public void setThisTurnDamage(int thisTurnDamage);
+    public void countRealAttack(int attackDamage, int magicDamage);
+    public void giveAttackBack(CardInterface defender);
+    public void executeDamage();
+    public CardInterface enemyFindToAttack(ArrayList<CardInterface> list);
+    public Color getColor();
+    public void setColor(Color color);
 }

@@ -1,5 +1,7 @@
 package pack;
 
+import com.sun.nio.sctp.SendFailedNotification;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -8,14 +10,16 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class GameBoard extends JPanel implements MouseListener, ComponentListener, ActionListener {
+public class GameBoard extends JPanel implements MouseListener, ComponentListener, ActionListener, MouseMotionListener {
 
     private Player myPlayer = new Player(false);
     private Player enemy = new Player(true);
     private ArrayList<CardInterface> cardPack;
     private Timer timerMove = new Timer(5,this);
     private Timer timerEnemyTurn = new Timer(100,this);
+    private Timer timerDestruction = new Timer(1000,this);
     private char enemyVariable = 0;
+    private Arrow arrow = new Arrow();
     //private Timer shouldMove = new Timer(100,this);
     /*private Timer timer = new Timer(10, new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -55,6 +59,7 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
     public GameBoard(ArrayList<CardInterface> cardPack) {
         addMouseListener(this);
         addComponentListener(this);
+        addMouseMotionListener(this);
         this.cardPack = cardPack;
         myPlayer.resize(getWidth(),getHeight());
         enemy.resize(getWidth(),getHeight());
@@ -73,6 +78,15 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
 
         myPlayer.paintCards(comp2D);
         enemy.paintCards(comp2D);
+        arrow.paint(comp2D);
+        myPlayer.paintCardsSpecial(comp2D);
+        enemy.paintCardsSpecial(comp2D);
+
+        if(timerDestruction.isRunning())
+        {
+            myPlayer.paintDestruction(comp2D);
+            enemy.paintDestruction(comp2D);
+        }
 
         //paintMovingCards(comp2D);
     }
@@ -259,10 +273,18 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
                 }
                 repaint();
             }
+            else if(myPlayer.anybodyToSpecialMove() || enemy.anybodyToSpecialMove())
+            {
+                timerDestruction.start();
+                repaint();
+            }
+
         }
         else if (source == timerEnemyTurn){
-            if(!enemy.anybodyToMove())
+            //System.out.println("s");
+            if(!enemy.anybodyToMove() && !enemy.anybodyToSpecialMove())
             {
+                //System.out.println("w");
                 if(enemyVariable == 0) {
                     enemy.startNewTurn(cardPack);
                     enemyVariable = 1;
@@ -272,26 +294,55 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
                     enemyVariable = 2;
                 }
                 else if(enemyVariable == 2) {
-                    enemy.endTheTurn();
-                    enemyVariable = 3;
+                    if(enemy.canStillAttack()){
+                        CardInterface cardA = enemy.firstToAttack();
+                        CardInterface cardB = cardA.enemyFindToAttack(myPlayer.cards);
+                        cardA.setMovingGoalEnemy(cardB);
+
+                        cardA.attack(enemy.cards, myPlayer.cards, Integer.toString(myPlayer.cards.indexOf(cardB)));
+                        cardA.setHasAttacked(true);
+                    }
+                    else {
+                        //System.out.println("J");
+                        enemyVariable = 3;
+                        //enemy.finishSpecial();
+                    }
                 }
                 else if(enemyVariable == 3) {
+                    enemy.endTheTurn();
+                    enemyVariable = 4;
+                }
+                else if(enemyVariable == 4) {
                     timerEnemyTurn.stop();
                     myPlayer.startNewTurn(cardPack);
                     enemyVariable = 0;
                 }
             }
         }
+        else if (source == timerDestruction){
+            timerDestruction.stop();
+            //myPlayer.finishSpecial();
+            //enemy.finishSpecial();
+            myPlayer.executeDamage();
+            enemy.executeDamage();
+            myPlayer.cleanDead();
+            enemy.cleanDead();
+            myPlayer.tidyUp();
+            enemy.tidyUp();
+
+        }
     }
 //Mouse LISNER
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        /*if(!timer.isRunning()) {
-            if (underAttackFlag) {
-                underAttackFlag = false;
+        if(!timerEnemyTurn.isRunning()){
+            if (arrow.isEnable()) {
+                arrow.setEnable(false);
                 repaint();
-            }*/
+            }
+            myPlayer.finishSpecial();
+            enemy.finishSpecial();
             //System.out.println("jestem");
             Point point = e.getPoint();
 
@@ -307,29 +358,40 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
                 }
             }
 
-            /*selectedCard = myPlayer.checkInList(point, myPlayer.cards);
+            selectedCard = myPlayer.checkInList(point, myPlayer.cards);
             //System.out.println(selectedCard);
             if (selectedCard >= 0) {
                 if (!myPlayer.cards.get(selectedCard).isHasAttacked()) {
-                    who = selectedCard;
-                    underAttackFlag = true;
+                    arrow.setNumber(selectedCard);
+                    arrow.setStart(myPlayer.cards.get(selectedCard));
+                    arrow.setStop(arrow.getStart());
+                    arrow.setEnable(true);
                     repaint();
                 }
             }
 
             selectedCard = myPlayer.checkInList(point, enemy.cards);
             //System.out.println(selectedCard);
-            if (selectedCard >= 0) {
-                myPlayer.cards.get(who).attack(myPlayer.cards, enemy.cards, Integer.toString(selectedCard));
-                myPlayer.cards.get(who).setHasAttacked(true);
-                tempPoint.setLocation(myPlayer.cards.get(who).getPoint());
+            if (selectedCard >= 0 && arrow.getNumber()>=0 && arrow.getNumber()<enemy.cards.size()) {
 
-                myPlayer.cards.get(who).setMoving(true);
+                CardInterface cardA = myPlayer.cards.get(arrow.getNumber());
+                CardInterface cardB = enemy.cards.get(selectedCard);
+                cardA.setMovingGoalPlayer(cardB);
+
+                cardA.attack(myPlayer.cards, enemy.cards, Integer.toString(selectedCard));
+                cardA.setHasAttacked(true);
+                arrow.setNumber(-1);
+                //tempPoint.setLocation(myPlayer.cards.get(who).getPoint());
+
+                /*myPlayer.cards.get(who).setMoving(true);
                 myPlayer.cards.get(who).setMovingGoal(enemy.cards.get(selectedCard).getPoint());
-                timer.start();
+                timer.start();*/
 
             }
-        }*/
+        }
+
+
+
 
     }
 
@@ -350,6 +412,21 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+//Mouse motion lisner
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        if(arrow.isEnable())
+        {
+            arrow.setStop(e.getPoint());
+            repaint();
+        }
     }
 }
 

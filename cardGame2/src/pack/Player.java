@@ -104,12 +104,17 @@ public class Player {
                     card.setMovingGoal(nextX,cardsY);
                 }
             }
+            else
+            {
+                card.setSpecialMoving(false);
+            }
             card.setSize(cardSizeX,cardSizeY);
         }
 
 
 
     }
+
 
     public void paintCards(Graphics2D comp2D)
     {
@@ -119,42 +124,96 @@ public class Player {
         }
         for(int i = 0; i < cards.size(); i++)
         {
-            paintCard(comp2D,cards.get(i));
+            if(!cards.get(i).isSpecialMoving()) {
+                paintCard(comp2D, cards.get(i));
+            }
+        }
+    }
+
+    public void paintCardsSpecial(Graphics2D comp2D)
+    {
+        for(int i = 0; i < cards.size(); i++)
+        {
+            if(cards.get(i).isSpecialMoving()) {
+                paintCard(comp2D, cards.get(i));
+            }
         }
     }
 
 
     public void paintCard(Graphics2D comp2D,CardInterface card)
     {
-        int x =card.getPoint().x;
-        int y = card.getPoint().y;
-        int sizeX = card.getSize().x;
-        int sizeY = card.getSize().y;
+        int x,y,sizeX,sizeY;
+        if(!card.isMoving()) {
+            x = card.getPoint().x;
+            y = card.getPoint().y;
+            sizeX = card.getSize().x;
+            sizeY = card.getSize().y;
+        }
+        else
+        {
+            x =card.getPoint().x - (int)(card.getSize().x * 0.1);
+            y = card.getPoint().y - (int)(card.getSize().y * 0.1);
+            sizeX = (int)(card.getSize().x * 1.2);
+            sizeY = (int)(card.getSize().y * 1.2);
+        }
         //System.out.println(sizeX);
 
-        comp2D.setColor(Color.RED);
+        //if(card.isHasAttacked()) comp2D.setColor(Color.RED);
+        //else comp2D.setColor(Color.BLUE);
+        comp2D.setColor(card.getColor());
         comp2D.fillRect(x,y,sizeX,sizeY);
+        if(!isEnemy && !card.isHasAttacked())
+        {
+            comp2D.setColor(Color.BLACK);
+            comp2D.fillRect(x,y+sizeY,sizeX,(int)(0.05*sizeY));
+        }
 
-        Font f = new Font("Dialog", Font.BOLD,(int)(0.12*sizeY));
-        comp2D.setFont(f);
+        if(!isEnemy || !handCards.contains(card)) {
+
+            Font f = new Font("Dialog", Font.BOLD, (int) (0.12 * sizeY));
+            comp2D.setFont(f);
+            comp2D.setColor(Color.BLACK);
+
+            comp2D.drawString(Integer.toString(card.getCost()), (int) (x + 0.1 * sizeX), (int) (y + 0.1 * sizeY));
+            comp2D.drawString(card.getName(), (int) (x + 0.3 * sizeX), (int) (y + 0.1 * sizeY));
+
+            Font f2 = new Font("Dialog", Font.BOLD, (int) (0.08 * sizeY));
+            comp2D.setFont(f2);
+
+            comp2D.drawString("AD: " + Integer.toString(card.getAttackDamage()), (int) (x + 0.1 * sizeX), (int) (y + 0.23 * sizeY));
+            comp2D.drawString("MD: " + Integer.toString(card.getMagicDamage()), (int) (x + 0.1 * sizeX), (int) (y + 0.31 * sizeY));
+            comp2D.drawString("H: " + Integer.toString(card.getHealth()), (int) (x + 0.1 * sizeX), (int) (y + 0.39 * sizeY));
+            comp2D.drawString("A: " + Double.toString(card.getArmor()), (int) (x + 0.1 * sizeX), (int) (y + 0.47 * sizeY));
+            comp2D.drawString("MR: " + Double.toString(card.getMagicResistance()), (int) (x + 0.1 * sizeX), (int) (y + 0.55 * sizeY));
+
+            Font f3 = new Font("Dialog", Font.PLAIN, (int) (0.08 * sizeY));
+            comp2D.setFont(f3);
+
+            comp2D.drawString(card.getDescription(), (int) (x + 0.1 * sizeX), (int) (y + 0.65 * sizeY));
+        }
+
+    }
+
+    public void paintDestruction(Graphics2D comp2D)
+    {
+        for(int i = 0; i < cards.size(); i++)
+        {
+            if(cards.get(i).getThisTurnDamage()!=0) paintDamage(comp2D, cards.get(i));
+        }
+    }
+
+    private void paintDamage(Graphics2D comp2D, CardInterface card)
+    {
+        int radius = (int)(0.4 * card.getSize().x);
+        int LHCornerX = (int)(card.getPoint().x+0.5 * card.getSize().x - radius);
+        int LHCornerY = (int)(card.getPoint().y+0.5 * card.getSize().y - radius);
+        comp2D.setColor(Color.GREEN);
+        comp2D.fillOval(LHCornerX,LHCornerY,2*radius,2*radius);
+
         comp2D.setColor(Color.BLACK);
-
-        comp2D.drawString(Integer.toString(card.getCost()),(int) (x+0.1*sizeX),(int) (y+0.1*sizeY));
-        comp2D.drawString(card.getName(),(int) (x+0.3*sizeX),(int) (y+0.1*sizeY));
-
-        Font f2 = new Font("Dialog", Font.BOLD,(int)(0.08*sizeY));
-        comp2D.setFont(f2);
-
-        comp2D.drawString("AD: " + Integer.toString(card.getAttackDamage()),(int) (x+0.1*sizeX),(int) (y+0.23*sizeY));
-        comp2D.drawString("MD: " + Integer.toString(card.getMagicDamage()),(int) (x+0.1*sizeX),(int) (y+0.31*sizeY));
-        comp2D.drawString("H: " + Integer.toString(card.getHealth()),(int) (x+0.1*sizeX),(int) (y+0.39*sizeY));
-        comp2D.drawString("A: " + Double.toString(card.getArmor()),(int) (x+0.1*sizeX),(int) (y+0.47*sizeY));
-        comp2D.drawString("MR: " + Double.toString(card.getMagicResistance()),(int) (x+0.1*sizeX),(int) (y+0.55*sizeY));
-
-        Font f3 = new Font("Dialog", Font.PLAIN,(int)(0.08*sizeY));
-        comp2D.setFont(f3);
-
-        comp2D.drawString(card.getDescription(),(int) (x+0.1*sizeX),(int) (y+0.65*sizeY));
+        comp2D.setFont(new Font("Arial Narrow",Font.PLAIN,(int)(1.2*radius)));
+        comp2D.drawString(String.valueOf(card.getThisTurnDamage()),(int)(LHCornerX + 0.2*radius),(int)(LHCornerY + 1.5*radius));
 
     }
 
@@ -197,12 +256,12 @@ public class Player {
     {
         for(var i: handCards)
         {
-            if(i.isMoving() || i.isSpecialMoving())
+            if(i.isMoving())
                 return true;
         }
         for(var i: cards)
         {
-            if(i.isMoving() || i.isSpecialMoving())
+            if(i.isMoving())
                 return true;
         }
         return false;
@@ -212,16 +271,33 @@ public class Player {
     {
         for(int i = 0; i < handCards.size(); i++)
         {
-            if(handCards.get(i).isMoving() || handCards.get(i).isSpecialMoving())
+            if(handCards.get(i).isMoving()/* || handCards.get(i).isSpecialMoving()*/)
                 handCards.get(i).move();
         }
         for(int i = 0; i < cards.size(); i++)
         {
-            if(cards.get(i).isMoving() || cards.get(i).isSpecialMoving())
+            if(cards.get(i).isMoving()/* || cards.get(i).isSpecialMoving()*/)
                 cards.get(i).move();
         }
     }
 
+    public boolean anybodyToSpecialMove()
+    {
+        for(var i: cards)
+        {
+            if(i.isSpecialMoving())
+                return true;
+        }
+        return false;
+    }
+
+    public void finishSpecial()
+    {
+        for (int i = 0; i < cards.size(); i++)
+        {
+            if(cards.get(i).isSpecialMoving()) cards.get(i).setSpecialMoving(false);
+        }
+    }
 
 
     public boolean isAbleToTakeCardFormHand()
@@ -256,15 +332,23 @@ public class Player {
             tidyUp();
         }
     }
-/*
+
     public boolean canStillAttack()
     {
-        boolean result = false;
         for(var i : cards)
         {
-            if(!i.isHasAttacked()) result=true;
+            if(!i.isHasAttacked()) return true;
         }
-        return result;
+        return false;
+    }
+
+    public CardInterface firstToAttack()
+    {
+        for(int i = 0; i < cards.size(); i++)
+        {
+            if(!cards.get(i).isHasAttacked()) return cards.get(i);
+        }
+        return null;
     }
 
     public void cleanDead()
@@ -278,9 +362,10 @@ public class Player {
             }
         }
     }
-*/
+
     public void endTheTurn()
     {
+        finishSpecial();
         for(int i = 0; i < cards.size(); i++)
         {
             cards.get(i).setHasAttacked(false);
@@ -298,13 +383,11 @@ public class Player {
         return -1;
     }
 
-/*    public CardInterface findMoving()
+    public void executeDamage()
     {
-        for(int i = 0; i < cards.size();i++)
+        for(int i = 0; i < cards.size(); i++)
         {
-            if(cards.get(i).isMoving()) return cards.get(i);
+            cards.get(i).executeDamage();
         }
-        return null;
     }
-*/
 }

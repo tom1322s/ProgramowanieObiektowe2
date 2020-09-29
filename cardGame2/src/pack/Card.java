@@ -1,6 +1,8 @@
 package pack;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 public abstract class Card implements CardInterface{
 
@@ -24,7 +26,10 @@ public abstract class Card implements CardInterface{
     protected Point point;
     protected Point size;
 
-    public Card(String name, int id, int cost, String description, int health, int attackDamage, int magicDamage, double armor, double magicResistance) {
+    protected int thisTurnDamage = 0;
+    protected Color color;
+
+    public Card(String name, int id, int cost, String description, int health, int attackDamage, int magicDamage, double armor, double magicResistance, Color color) {
         this.name = name;
         this.id = id;
         this.cost = cost;
@@ -37,6 +42,7 @@ public abstract class Card implements CardInterface{
         movingGoal = new Point(0,0);
         point = new Point(0,0);
         size = new Point(0,0);
+        this.color = color;
     }
 
     public String getName() {
@@ -195,7 +201,7 @@ public abstract class Card implements CardInterface{
         if(point.equals(movingGoal))
         {
             isMoving = false;
-            isSpecialMoving = false;
+            //isSpecialMoving = false;
         }
         else
         {
@@ -218,5 +224,73 @@ public abstract class Card implements CardInterface{
             point.y++;
         if(point.y>movingGoal.y)
             point.y--;
+    }
+
+    public void setMovingGoalPlayer(CardInterface goal) {
+        this.movingGoal.x = goal.getPoint().x;
+        this.movingGoal.y = goal.getPoint().y+goal.getSize().y/2;
+        isSpecialMoving = true;
+        isMoving = true;
+    }
+
+    public void setMovingGoalEnemy(CardInterface goal) {
+        this.movingGoal.x = goal.getPoint().x;
+        this.movingGoal.y = goal.getPoint().y-goal.getSize().y/2;
+        isSpecialMoving = true;
+        isMoving = true;
+    }
+
+    public int getThisTurnDamage() {
+        return thisTurnDamage;
+    }
+
+    public void setThisTurnDamage(int thisTurnDamage) {
+        this.thisTurnDamage = thisTurnDamage;
+    }
+
+    @Override
+    public void attack(ArrayList<CardInterface> myList, ArrayList<CardInterface> enemyList, String info) {
+
+        int goal = Integer.parseInt(info);
+        CardInterface defender = enemyList.get(goal);
+
+        defender.countRealAttack(this.getAttackDamage(),this.getMagicDamage());
+        giveAttackBack(defender);
+    }
+
+    public void giveAttackBack(CardInterface defender)
+    {
+        if(defender.getHealth() - defender.getThisTurnDamage() >0 && !defender.isHasGiveBack()) {
+            countRealAttack(defender.getAttackDamage(), defender.getMagicDamage());
+            defender.setHasGiveBack(true);
+        }
+    }
+
+    public void countRealAttack(int attackDamage, int magicDamage)
+    {
+        thisTurnDamage = (int)(((1.0-armor)*attackDamage)+((1.0-magicResistance)*magicDamage));
+    }
+
+    public void executeDamage()
+    {
+        if(thisTurnDamage != 0){
+            health -= thisTurnDamage;
+            thisTurnDamage = 0;
+        }
+    }
+
+    public CardInterface enemyFindToAttack(ArrayList<CardInterface> list)
+    {
+        Random rm = new Random();
+        int index = rm.nextInt(list.size());
+        return list.get(index);
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 }
