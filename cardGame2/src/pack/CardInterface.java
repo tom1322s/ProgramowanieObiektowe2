@@ -56,4 +56,7 @@ public interface CardInterface {
     public CardInterface enemyFindToAttack(ArrayList<CardInterface> list);
     public Color getColor();
     public void setColor(Color color);
+    public void onInit(Player myPlayer, Player enemy);
+    public void onDead(Player myPlayer, Player enemy);
+    public void boost(Boost b);
 }

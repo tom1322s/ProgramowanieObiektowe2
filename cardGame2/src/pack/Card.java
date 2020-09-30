@@ -293,4 +293,23 @@ public abstract class Card implements CardInterface{
     public void setColor(Color color) {
         this.color = color;
     }
+
+    public void onInit(Player myPlayer, Player enemy)
+    {
+
+    }
+
+    public void onDead(Player myPlayer, Player enemy)
+    {
+
+    }
+
+    public void boost(Boost b)
+    {
+        attackDamage +=b.getAd();
+        magicDamage += b.getAp();
+        health += b.getH();
+        armor += b.getA();
+        magicResistance += b.getMr();
+    }
 }

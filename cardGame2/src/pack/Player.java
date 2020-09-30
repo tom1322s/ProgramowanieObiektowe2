@@ -13,6 +13,7 @@ public class Player {
     private int height = 0;
     private int width = 0;
     private boolean isEnemy;
+    private Boost boost = new Boost();
     public static final int MAX_HAND_CARDS = 6;
     public static final int MAX_BOARD_CARDS = 10;
     public static final int START_HAND_CARDS = 3;
@@ -33,6 +34,14 @@ public class Player {
 
     public void setMana(int mana) {
         this.mana = mana;
+    }
+
+    public Boost getBoost() {
+        return boost;
+    }
+
+    public void setBoost(Boost boost) {
+        this.boost = boost;
     }
 
     public Player(boolean isEnemy) {
@@ -162,6 +171,8 @@ public class Player {
         //if(card.isHasAttacked()) comp2D.setColor(Color.RED);
         //else comp2D.setColor(Color.BLUE);
         comp2D.setColor(card.getColor());
+        if(isEnemy && handCards.contains(card)) comp2D.setColor(Color.RED);
+
         comp2D.fillRect(x,y,sizeX,sizeY);
         if(!isEnemy && !card.isHasAttacked())
         {
@@ -310,7 +321,7 @@ public class Player {
         return result;
     }
 
-    public void drawCardFromHand()
+    public void drawCardFromHand(Player p)
     {
         int selectedCard = -1;
         while(isAbleToTakeCardFormHand() && cards.size() < Player.MAX_BOARD_CARDS)
@@ -328,6 +339,8 @@ public class Player {
             }
             while(!manaEnough);
 
+            handCards.get(selectedCard).boost(boost);
+            handCards.get(selectedCard).onInit(this,p);
             cards.add(handCards.remove(selectedCard));
             tidyUp();
         }
@@ -351,12 +364,13 @@ public class Player {
         return null;
     }
 
-    public void cleanDead()
+    public void cleanDead(Player p)
     {
         for(int i = 0; i < cards.size(); i++)
         {
             if(cards.get(i).getHealth() <= 0)
             {
+                cards.get(i).onDead(this,p);
                 cards.remove(i);
                 i--;
             }

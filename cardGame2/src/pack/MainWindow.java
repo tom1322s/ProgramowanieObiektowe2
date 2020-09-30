@@ -16,15 +16,21 @@ public class MainWindow extends JFrame implements ActionListener {
         JPanel panel = new JPanel();
 
         cardPack = new ArrayList<>();
-        //cardPack.add(new Tank());
+        cardPack.add(new Gibbering());
         cardPack.add(new Archer());
-        /*cardPack.add(new Peasant());
-        cardPack.add(new Magician());
-        cardPack.add(new Dragon());
-        cardPack.add(new Healer());
-        cardPack.add(new Fairy());
-        cardPack.add(new Cannon());
-        cardPack.add(new MagicCannon());*/
+        cardPack.add(new Neardenthal());
+        cardPack.add(new Dwarf());
+        cardPack.add(new BrainMole());
+        cardPack.add(new KouToa());
+        cardPack.add(new Manticore());
+        cardPack.add(new OrcChieftain());
+        cardPack.add(new InsectSwarm());
+        cardPack.add(new LavaImp());
+        cardPack.add(new ArcaneMage());
+        cardPack.add(new MountainGigant());
+        cardPack.add(new Phoenix());
+        cardPack.add(new MindFlyer());
+        cardPack.add(new DollGolem());
 
         BoxLayout boxLayout = new BoxLayout(panel, BoxLayout.Y_AXIS);
         panel.setLayout(boxLayout);

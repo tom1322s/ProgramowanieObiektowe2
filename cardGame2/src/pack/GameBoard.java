@@ -290,7 +290,8 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
                     enemyVariable = 1;
                 }
                 else if(enemyVariable == 1) {
-                    enemy.drawCardFromHand();
+                    enemy.drawCardFromHand(myPlayer);
+                    timerDestruction.start();
                     enemyVariable = 2;
                 }
                 else if(enemyVariable == 2) {
@@ -325,8 +326,8 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
             //enemy.finishSpecial();
             myPlayer.executeDamage();
             enemy.executeDamage();
-            myPlayer.cleanDead();
-            enemy.cleanDead();
+            myPlayer.cleanDead(enemy);
+            enemy.cleanDead(myPlayer);
             myPlayer.tidyUp();
             enemy.tidyUp();
 
@@ -336,7 +337,7 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(!timerEnemyTurn.isRunning()){
+        if(!timerEnemyTurn.isRunning() && !myPlayer.anybodyToMove()){
             if (arrow.isEnable()) {
                 arrow.setEnable(false);
                 repaint();
@@ -352,41 +353,47 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
                 if (myPlayer.getMana() >= myPlayer.handCards.get(selectedCard).getCost()) {
                     //System.out.println("jestem w");
                     myPlayer.setMana(myPlayer.getMana() - myPlayer.handCards.get(selectedCard).getCost());
+                    myPlayer.handCards.get(selectedCard).boost(myPlayer.getBoost());
+                    myPlayer.handCards.get(selectedCard).onInit(myPlayer,enemy);
+                    timerDestruction.start();
+
                     myPlayer.cards.add(myPlayer.handCards.remove(selectedCard));
                     myPlayer.tidyUp();
                     repaint();
                 }
             }
+            else {
 
-            selectedCard = myPlayer.checkInList(point, myPlayer.cards);
-            //System.out.println(selectedCard);
-            if (selectedCard >= 0) {
-                if (!myPlayer.cards.get(selectedCard).isHasAttacked()) {
-                    arrow.setNumber(selectedCard);
-                    arrow.setStart(myPlayer.cards.get(selectedCard));
-                    arrow.setStop(arrow.getStart());
-                    arrow.setEnable(true);
-                    repaint();
+                selectedCard = myPlayer.checkInList(point, myPlayer.cards);
+                //System.out.println(selectedCard);
+                if (selectedCard >= 0) {
+                    if (!myPlayer.cards.get(selectedCard).isHasAttacked()) {
+                        arrow.setNumber(selectedCard);
+                        arrow.setStart(myPlayer.cards.get(selectedCard));
+                        arrow.setStop(arrow.getStart());
+                        arrow.setEnable(true);
+                        repaint();
+                    }
                 }
-            }
 
-            selectedCard = myPlayer.checkInList(point, enemy.cards);
-            //System.out.println(selectedCard);
-            if (selectedCard >= 0 && arrow.getNumber()>=0 && arrow.getNumber()<enemy.cards.size()) {
+                selectedCard = myPlayer.checkInList(point, enemy.cards);
+                //System.out.println(selectedCard+ " "+arrow.getNumber());
+                if (selectedCard >= 0 && arrow.getNumber() >= 0 && arrow.getNumber() < myPlayer.cards.size()) {
+                    //System.out.println("jest");
+                    CardInterface cardA = myPlayer.cards.get(arrow.getNumber());
+                    CardInterface cardB = enemy.cards.get(selectedCard);
+                    cardA.setMovingGoalPlayer(cardB);
 
-                CardInterface cardA = myPlayer.cards.get(arrow.getNumber());
-                CardInterface cardB = enemy.cards.get(selectedCard);
-                cardA.setMovingGoalPlayer(cardB);
-
-                cardA.attack(myPlayer.cards, enemy.cards, Integer.toString(selectedCard));
-                cardA.setHasAttacked(true);
-                arrow.setNumber(-1);
-                //tempPoint.setLocation(myPlayer.cards.get(who).getPoint());
+                    cardA.attack(myPlayer.cards, enemy.cards, Integer.toString(selectedCard));
+                    cardA.setHasAttacked(true);
+                    arrow.setNumber(-1);
+                    //tempPoint.setLocation(myPlayer.cards.get(who).getPoint());
 
                 /*myPlayer.cards.get(who).setMoving(true);
                 myPlayer.cards.get(who).setMovingGoal(enemy.cards.get(selectedCard).getPoint());
                 timer.start();*/
 
+                }
             }
         }
 
