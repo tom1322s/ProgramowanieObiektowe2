@@ -29,6 +29,10 @@ public abstract class Card implements CardInterface{
     protected int thisTurnDamage = 0;
     protected Color color;
 
+    private int moveCounter = 0;
+    private int moveCapacity = 0;
+    private boolean moveDirection = false;
+
     public Card(String name, int id, int cost, String description, int health, int attackDamage, int magicDamage, double armor, double magicResistance, Color color) {
         this.name = name;
         this.id = id;
@@ -205,8 +209,32 @@ public abstract class Card implements CardInterface{
         }
         else
         {
-            moveX();
-            moveY();
+            //moveX();
+            //moveY();
+            if(moveCounter==moveCapacity)
+            {
+                moveX();
+                moveY();
+                moveCounter = 0;
+                int dx = Math.abs(point.x-movingGoal.x);
+                int dy = Math.abs(point.y-movingGoal.y);
+                if(dx!=0 && dy!=0) {
+                    if (dx > dy) {
+                        moveCapacity = dx / dy;
+                        moveDirection = true;
+                    } else if (dy > dx) {
+                        moveCapacity = dy / dx;
+                        moveDirection = false;
+                    } else moveCapacity = 0;
+                } else moveCapacity = 0;
+
+            }
+            else
+            {
+                moveCounter++;
+                if(moveDirection) moveX();
+                else moveY();
+            }
         }
     }
 

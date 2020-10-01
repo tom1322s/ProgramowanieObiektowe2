@@ -305,10 +305,18 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
                 else if(enemyVariable == 2) {
                     if(enemy.canStillAttack()){
                         CardInterface cardA = enemy.firstToAttack();
-                        CardInterface cardB = cardA.enemyFindToAttack(myPlayer.cards);
-                        cardA.setMovingGoalEnemy(cardB);
+                        if(myPlayer.cards.size()>0) {
+                            CardInterface cardB = cardA.enemyFindToAttack(myPlayer.cards);
+                            cardA.setMovingGoalEnemy(cardB);
 
-                        cardA.attack(enemy.cards, myPlayer.cards, Integer.toString(myPlayer.cards.indexOf(cardB)));
+                            cardA.attack(enemy.cards, myPlayer.cards, Integer.toString(myPlayer.cards.indexOf(cardB)));
+                        }
+                        else
+                        {
+                            cardA.setMovingGoalEnemyHero(myPlayer.getHero());
+
+                            myPlayer.getHero().setInjuries(cardA.getAttackDamage()+cardA.getMagicDamage());
+                        }
                         cardA.setHasAttacked(true);
                     }
                     else {
@@ -380,6 +388,7 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
                         arrow.setStart(myPlayer.cards.get(selectedCard));
                         arrow.setStop(arrow.getStart());
                         arrow.setEnable(true);
+                        arrow.setColor(Color.BLACK);
                         repaint();
                     }
                 }
