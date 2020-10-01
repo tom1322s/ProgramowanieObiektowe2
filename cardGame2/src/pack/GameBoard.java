@@ -67,6 +67,12 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
         timerMove.start();
     }
 
+    public boolean gameLast()
+    {
+        if(myPlayer.getHero().getHealth()>0 && enemy.getHero().getHealth()>0) return true;
+        return false;
+    }
+
 
     public void paintComponent(Graphics comp)
     {
@@ -78,6 +84,8 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
 
         myPlayer.paintCards(comp2D);
         enemy.paintCards(comp2D);
+        myPlayer.paintHero(comp2D);
+        enemy.paintHero(comp2D);
         arrow.paint(comp2D);
         myPlayer.paintCardsSpecial(comp2D);
         enemy.paintCardsSpecial(comp2D);
@@ -387,13 +395,18 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
                     cardA.attack(myPlayer.cards, enemy.cards, Integer.toString(selectedCard));
                     cardA.setHasAttacked(true);
                     arrow.setNumber(-1);
-                    //tempPoint.setLocation(myPlayer.cards.get(who).getPoint());
-
-                /*myPlayer.cards.get(who).setMoving(true);
-                myPlayer.cards.get(who).setMovingGoal(enemy.cards.get(selectedCard).getPoint());
-                timer.start();*/
-
                 }
+
+                if (myPlayer.checkHero(e.getPoint(), enemy.getHero()) && arrow.getNumber() >= 0 && arrow.getNumber() < myPlayer.cards.size() && enemy.cards.size()==0){
+                    CardInterface card = myPlayer.cards.get(arrow.getNumber());
+                    card.setMovingGoalPlayerHero(enemy.getHero());
+
+                    enemy.getHero().setInjuries(card.getAttackDamage()+card.getMagicDamage());
+                    card.setHasAttacked(true);
+                    arrow.setNumber(-1);
+                }
+
+
             }
         }
 
@@ -431,7 +444,23 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
     public void mouseMoved(MouseEvent e) {
         if(arrow.isEnable())
         {
-            arrow.setStop(e.getPoint());
+            arrow.setCardSize(myPlayer.cards.get(0).getSize()); // bezpieczne bo zeby uzyc arrow zawsze musi istniec karta bazowa
+            int selectedCard = myPlayer.checkInList(e.getPoint(), enemy.cards);
+
+            if (selectedCard >= 0 && arrow.getNumber() >= 0 && arrow.getNumber() < myPlayer.cards.size()) {
+                CardInterface card = enemy.cards.get(selectedCard);
+                arrow.setStop(card.getPoint().x+card.getSize().x/2,card.getPoint().y+card.getSize().y/2);
+                arrow.setColor(Color.RED);
+            }
+            else if(myPlayer.checkHero(e.getPoint(), enemy.getHero()) && enemy.cards.size()==0)
+            {
+                arrow.setStop(enemy.getHero().getPoint().x+enemy.getHero().getSize().x/2,enemy.getHero().getPoint().y+enemy.getHero().getSize().y/2);
+                arrow.setColor(new Color(255, 81,0));
+            }
+            else {
+                arrow.setStop(e.getPoint());
+                arrow.setColor(Color.BLACK);
+            }
             repaint();
         }
     }

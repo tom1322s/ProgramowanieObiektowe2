@@ -240,6 +240,21 @@ public abstract class Card implements CardInterface{
         isMoving = true;
     }
 
+    public void setMovingGoalPlayerHero(Hero goal)
+    {
+        this.movingGoal.x = goal.getPoint().x;
+        this.movingGoal.y = goal.getPoint().y+goal.getSize().y/2;
+        isSpecialMoving = true;
+        isMoving = true;
+    }
+
+    public void setMovingGoalEnemyHero(Hero goal) {
+        this.movingGoal.x = goal.getPoint().x;
+        this.movingGoal.y = goal.getPoint().y-goal.getSize().y/2;
+        isSpecialMoving = true;
+        isMoving = true;
+    }
+
     public int getThisTurnDamage() {
         return thisTurnDamage;
     }

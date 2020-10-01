@@ -47,7 +47,9 @@ public interface CardInterface {
     public void setSpecialMoving(boolean specialMoving);
     public void move();
     public void setMovingGoalPlayer(CardInterface goal);
+    public void setMovingGoalPlayerHero(Hero goal);
     public void setMovingGoalEnemy(CardInterface goal);
+    public void setMovingGoalEnemyHero(Hero goal);
     public int getThisTurnDamage();
     public void setThisTurnDamage(int thisTurnDamage);
     public void countRealAttack(int attackDamage, int magicDamage);

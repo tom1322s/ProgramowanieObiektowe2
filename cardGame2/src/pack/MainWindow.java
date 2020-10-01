@@ -70,7 +70,7 @@ public class MainWindow extends JFrame implements ActionListener {
         gameBoard.repaint();*/
 
         //while(!endOfGame) {
-        while(true) {
+        while(gameBoard.gameLast()) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
