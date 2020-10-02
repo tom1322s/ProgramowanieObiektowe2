@@ -31,6 +31,16 @@ public class MainWindow extends JFrame implements ActionListener {
         cardPack.add(new Phoenix());
         cardPack.add(new MindFlyer());
         cardPack.add(new DollGolem());
+        cardPack.add(new Dryad());
+        cardPack.add(new HellHound());
+        cardPack.add(new Elemental());
+        cardPack.add(new Obelisk());
+        cardPack.add(new Nightmere());
+        cardPack.add(new Genie());
+        cardPack.add(new Treant());
+        cardPack.add(new Satyr());
+        cardPack.add(new Shedu());
+        cardPack.add(new KuoToaSquad());
 
         BoxLayout boxLayout = new BoxLayout(panel, BoxLayout.Y_AXIS);
         panel.setLayout(boxLayout);

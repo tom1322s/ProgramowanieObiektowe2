@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class LavaImp extends Card{
     public LavaImp() {
-        super("Lava Imp", 10, 2, "he has damage", 5, 0, 30, 0.0, 0.0, new Color(255, 0, 0, 255));
+        super("Lava Imp", 10, 2, "Fast attack", 5, 0, 30, 0.0, 0.0, new Color(255, 0, 0, 255));
     }
 
     public LavaImp(LavaImp copy){

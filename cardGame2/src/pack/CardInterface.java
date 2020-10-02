@@ -60,5 +60,6 @@ public interface CardInterface {
     public void setColor(Color color);
     public void onInit(Player myPlayer, Player enemy);
     public void onDead(Player myPlayer, Player enemy);
+    public void onEndTurn(Player myPlayer, Player enemy);
     public void boost(Boost b);
 }

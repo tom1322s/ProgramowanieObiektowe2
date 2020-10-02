@@ -7,7 +7,7 @@ import java.util.Random;
 public class BrainMole  extends Card{
     int initialMagicDamage = 10;
     public BrainMole() {
-        super("BrainMole", 5, 1, "he has damage", 10, 10, 0, 0.0, 0.0, new Color(203, 0, 160, 255));
+        super("BrainMole", 5, 1, "Deals 10 dmg to random", 10, 10, 0, 0.0, 0.0, new Color(203, 0, 160, 255));
     }
 
     public BrainMole(BrainMole copy){

@@ -347,6 +347,11 @@ public abstract class Card implements CardInterface{
 
     }
 
+    public void onEndTurn(Player myPlayer, Player enemy)
+    {
+
+    }
+
     public void boost(Boost b)
     {
         attackDamage +=b.getAd();

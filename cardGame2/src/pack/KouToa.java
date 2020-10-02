@@ -5,7 +5,7 @@ import java.awt.*;
 public class KouToa extends Card{
     public int extraAttackDamage = 10;
     public KouToa() {
-        super("Kou-Toa", 6, 3, "he has damage", 20, 20, 0, 0.0, 0.0, new Color(42, 255, 157, 255));
+        super("Kou-Toa", 6, 3, "Add 10 ad to all", 20, 20, 0, 0.0, 0.0, new Color(42, 255, 157, 255));
     }
 
     public KouToa(KouToa copy){

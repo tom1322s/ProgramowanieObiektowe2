@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class InsectSwarm extends Card{
     public InsectSwarm() {
-        super("InsectSwarm", 9, 3, "he has damage", 10, 10, 0, 0.0, 0.0, new Color(250, 255, 23, 255));
+        super("InsectSwarm", 9, 3, "Summon 2 his copies", 10, 10, 0, 0.0, 0.0, new Color(250, 255, 23, 255));
     }
 
     public InsectSwarm(InsectSwarm copy){

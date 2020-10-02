@@ -6,7 +6,7 @@ import java.util.Random;
 public class Phoenix extends Card{
     public int initialMagicDamage = 50;
     public Phoenix() {
-        super("Phoenix", 13, 6, "he has damage", 50, 60, 0, 0.0, 0.0, new Color(255, 84, 1, 255));
+        super("Phoenix", 13, 6, "Deals 50 MA to rand enemy", 50, 60, 0, 0.0, 0.0, new Color(255, 84, 1, 255));
     }
 
     public Phoenix(Phoenix copy){

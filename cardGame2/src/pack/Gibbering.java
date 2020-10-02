@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Gibbering extends Card{
     public Gibbering() {
-        super("Gibbering", 0001, 2, "he has damage", 20, 10, 0, 0.0, 0.0, new Color(187, 0, 255, 255));
+        super("Gibbering", 0001, 2, "Summon his copy", 20, 10, 0, 0.0, 0.0, new Color(187, 0, 255, 255));
     }
 
     public Gibbering(Gibbering copy){

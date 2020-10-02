@@ -7,7 +7,7 @@ import java.util.Random;
 public class ArcaneMage extends Card{
     public int initialMagicDamage = 10;
     public ArcaneMage() {
-        super("Arcane Mage", 11, 3, "he has damage", 10, 0, 20, 0.0, 0.0, new Color(0, 85, 255, 255));
+        super("Arcane Mage", 11, 3, "Deals 10 mdmg to enemies", 10, 0, 20, 0.0, 0.0, new Color(0, 85, 255, 255));
     }
 
     public ArcaneMage(ArcaneMage copy){

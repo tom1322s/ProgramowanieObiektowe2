@@ -8,6 +8,7 @@ public class Player {
 
     public ArrayList<CardInterface> cards;
     public ArrayList<CardInterface> handCards;
+    public ArrayList<CardInterface> temple;
     private int manaCapacity = 0;
     private  int mana = 0;
     private int height = 0;
@@ -53,10 +54,15 @@ public class Player {
         this.hero = hero;
     }
 
-    public Player(boolean isEnemy) {
+    public ArrayList<CardInterface> getTemple() {
+        return temple;
+    }
+
+    public Player(boolean isEnemy, ArrayList<CardInterface>  temple) {
         cards = new ArrayList<>();
         handCards = new ArrayList<>();
         this.isEnemy = isEnemy;
+        this.temple = temple;
     }
 
     public void resize(int width, int height){
@@ -235,12 +241,18 @@ public class Player {
         int radius = (int)(0.4 * card.getSize().x);
         int LHCornerX = (int)(card.getPoint().x+0.5 * card.getSize().x - radius);
         int LHCornerY = (int)(card.getPoint().y+0.5 * card.getSize().y - radius);
-        comp2D.setColor(Color.GREEN);
+        if(card.getThisTurnDamage() > 0)
+            comp2D.setColor(Color.GREEN);
+        else
+            comp2D.setColor(Color.BLUE);
         comp2D.fillOval(LHCornerX,LHCornerY,2*radius,2*radius);
 
         comp2D.setColor(Color.BLACK);
         comp2D.setFont(new Font("Arial Narrow",Font.PLAIN,(int)(1.2*radius)));
-        comp2D.drawString(String.valueOf(card.getThisTurnDamage()),(int)(LHCornerX + 0.2*radius),(int)(LHCornerY + 1.5*radius));
+        if(card.getThisTurnDamage() > 0)
+            comp2D.drawString(String.valueOf(card.getThisTurnDamage()),(int)(LHCornerX + 0.2*radius),(int)(LHCornerY + 1.5*radius));
+        else
+            comp2D.drawString(String.valueOf(-card.getThisTurnDamage()),(int)(LHCornerX + 0.2*radius),(int)(LHCornerY + 1.5*radius));
 
     }
 
@@ -249,12 +261,18 @@ public class Player {
         int radius = (int)(0.4 * hero.getSize().y);
         int LHCornerX = (int)(hero.getPoint().x+0.5 * hero.getSize().x - radius);
         int LHCornerY = (int)(hero.getPoint().y+0.5 * hero.getSize().y - radius);
-        comp2D.setColor(Color.GREEN);
+        if(hero.getInjuries() > 0)
+            comp2D.setColor(Color.GREEN);
+        else
+            comp2D.setColor(Color.BLUE);
         comp2D.fillOval(LHCornerX,LHCornerY,2*radius,2*radius);
 
         comp2D.setColor(Color.BLACK);
         comp2D.setFont(new Font("Arial Narrow",Font.PLAIN,(int)(1.2*radius)));
-        comp2D.drawString(String.valueOf(hero.getInjuries()),(int)(LHCornerX + 0.2*radius),(int)(LHCornerY + 1.5*radius));
+        if(hero.getInjuries() > 0)
+            comp2D.drawString(String.valueOf(hero.getInjuries()),(int)(LHCornerX + 0.2*radius),(int)(LHCornerY + 1.5*radius));
+        else
+            comp2D.drawString(String.valueOf(-hero.getInjuries()),(int)(LHCornerX + 0.2*radius),(int)(LHCornerY + 1.5*radius));
 
     }
 
@@ -418,12 +436,13 @@ public class Player {
         }
     }
 
-    public void endTheTurn()
+    public void endTheTurn(Player en)
     {
         finishSpecial();
         for(int i = 0; i < cards.size(); i++)
         {
             cards.get(i).setHasAttacked(false);
+            cards.get(i).onEndTurn(this,en);
         }
     }
 

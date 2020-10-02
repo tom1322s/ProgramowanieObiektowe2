@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class MindFlyer extends Card{
     public MindFlyer() {
-        super("MindFlyer", 14, 5, "he has damage", 40, 0, 20, 0.0, 0.0, new Color(59, 17, 52, 255));
+        super("MindFlyer", 14, 5, "Steal card to 20 dmg", 40, 0, 20, 0.0, 0.0, new Color(59, 17, 52, 255));
     }
 
     public MindFlyer(MindFlyer copy){

@@ -12,8 +12,8 @@ import java.util.Random;
 
 public class GameBoard extends JPanel implements MouseListener, ComponentListener, ActionListener, MouseMotionListener {
 
-    private Player myPlayer = new Player(false);
-    private Player enemy = new Player(true);
+    private Player myPlayer;
+    private Player enemy;
     private ArrayList<CardInterface> cardPack;
     private Timer timerMove = new Timer(5,this);
     private Timer timerEnemyTurn = new Timer(100,this);
@@ -61,6 +61,8 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
         addComponentListener(this);
         addMouseMotionListener(this);
         this.cardPack = cardPack;
+        myPlayer = new Player(false,this.cardPack);
+        enemy = new Player(true,this.cardPack);
         myPlayer.resize(getWidth(),getHeight());
         enemy.resize(getWidth(),getHeight());
         //shouldMove.start();
@@ -237,8 +239,10 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
 
     public void playerEndTurn()
     {
-        myPlayer.endTheTurn();
+        myPlayer.endTheTurn(enemy);
+        myPlayer.tidyUp();
         timerEnemyTurn.start();
+        timerDestruction.start();
     }
 
 
@@ -326,7 +330,9 @@ public class GameBoard extends JPanel implements MouseListener, ComponentListene
                     }
                 }
                 else if(enemyVariable == 3) {
-                    enemy.endTheTurn();
+                    enemy.endTheTurn(myPlayer);
+                    timerDestruction.start();
+                    enemy.tidyUp();
                     enemyVariable = 4;
                 }
                 else if(enemyVariable == 4) {

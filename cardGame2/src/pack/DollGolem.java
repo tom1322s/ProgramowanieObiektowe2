@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class DollGolem extends Card{
     public DollGolem() {
-        super("Doll Golem", 15, 3, "he has damage", 30, 20, 0, 0.0, 0.0, new Color(243, 109, 240, 255));
+        super("Doll Golem", 15, 3, "After death summon Bonegolem", 30, 20, 0, 0.0, 0.0, new Color(243, 109, 240, 255));
     }
 
     public DollGolem(DollGolem copy){
